@@ -80,6 +80,9 @@ class RealNumber: public Expression {
     public:
     static std::unique_ptr<RealNumber> parse(std::string_view input) {
         double number = 0;
+        if (input.size() && input.front() == '+') {
+            input.remove_prefix(1);
+        }
         auto ret = std::from_chars(input.data(), input.data() + input.size(), number);
         return ret.ec == std::errc() ? std::make_unique<RealNumber>(number) : nullptr;
     }
