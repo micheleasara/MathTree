@@ -127,7 +127,6 @@ std::unique_ptr<Expression> buildExpression(std::string_view expression) {
 
     std::cout << "Processing expression " << expression << "\n";
     std::vector<size_t> openBracketsIdx;
-    std::stack<size_t> closedBracketsIdx;
     // flag to check if we need to remove extra brackets e.g. (a+b) to a+b
     bool needsParenthesisPruning = (expression.front() == '(');
 
@@ -135,14 +134,14 @@ std::unique_ptr<Expression> buildExpression(std::string_view expression) {
         if (expression[i] == '(') {
             openBracketsIdx.push_back(i);
         } else if (expression[i] == ')') {
-            assert(openBracketsIdx.size());
-            closedBracketsIdx.push(i);
-            if (openBracketsIdx.size() == closedBracketsIdx.size() && i < expression.size() - 1) {
+            assert(openBracketsIdx.size() > 0);
+            openBracketsIdx.pop_back();
+            if (openBracketsIdx.size() == 0 && i < expression.size() - 1) {
                 needsParenthesisPruning = false;
             }
         }
     }
-    assert(openBracketsIdx.size() == closedBracketsIdx.size());
+    assert(openBracketsIdx.size() == 0);
 
     if (needsParenthesisPruning) {
         expression.remove_prefix(1);
@@ -152,54 +151,22 @@ std::unique_ptr<Expression> buildExpression(std::string_view expression) {
         return buildExpression(expression);
     }
 
-    for (auto const& idxOpen: openBracketsIdx) {
-        if (idxOpen > 0) {
-            auto operatorIdx = idxOpen - 1;
-            auto operation = expression[operatorIdx];
-            if (operators.count(operation)) {
-                auto left = std::string_view(expression.data(), operatorIdx);
-                auto right = std::string_view(expression.data() + idxOpen,
-                                              expression.size() - idxOpen);
-                std::cout << "first left " << left << " right " << right << "\n";
-                return BinaryExpressionFactory::make(buildExpression(left),
-                                                     buildExpression(right), operation);
-            }
-        }
-
-        assert(closedBracketsIdx.size() > 0);
-        auto idxClosed = closedBracketsIdx.top();
-        closedBracketsIdx.pop();
-        if (idxClosed < expression.size() - 1) {
-            auto operatorIdx = idxClosed + 1;
-            auto operation = expression[idxClosed + 1];
-            if (operators.count(operation)) {
-                auto left = std::string_view(expression.data(), operatorIdx);
-                auto right = std::string_view(expression.data() + operatorIdx + 1,
-                                              expression.size() - operatorIdx - 1);
-                std::cout << "second left " << left << " right " << right << "\n";
-                return BinaryExpressionFactory::make(buildExpression(left),
-                                                     buildExpression(right), operation);
-            }
-        }
-    }
-
-    size_t operatorsCount = 0;
     size_t lowestPriorityOperatorIdx = 0;
+    size_t topLevelOperatorsCount = 0;
     for (size_t i = 0; i < expression.size(); ++i) {
-        if (operators.count(expression[i])) {
-            ++operatorsCount;
-            if (lowestPriorityOperatorIdx > 0) {
-                auto lowestPriorityOperator = expression[lowestPriorityOperatorIdx];
-                auto currentOperator = expression[i];
-                if (operatorsPriority[lowestPriorityOperator] > operatorsPriority[currentOperator]) {
-                    lowestPriorityOperatorIdx = i;
-                }
-            } else {
+        if (openBracketsIdx.empty() && operators.count(expression[i])) {
+            ++topLevelOperatorsCount;
+            if (lowestPriorityOperatorIdx <= 0 ||
+                        operatorsPriority[expression[lowestPriorityOperatorIdx]] > operatorsPriority[expression[i]]) {
                 lowestPriorityOperatorIdx = i;
             }
+        } else if (expression[i] == '(') {
+            openBracketsIdx.push_back(i);
+        } else if (expression[i] == ')') {
+            openBracketsIdx.pop_back();
         }
     }
-    if (operatorsCount <= 0 || (operatorsCount == 1 && lowestPriorityOperatorIdx == 0)) {
+    if (topLevelOperatorsCount <= 0 || (topLevelOperatorsCount == 1 && lowestPriorityOperatorIdx == 0)) {
         return RealNumber::parse(expression);
     } else {
         auto left = std::string_view(expression.data(), lowestPriorityOperatorIdx);
