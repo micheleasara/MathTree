@@ -132,6 +132,10 @@ std::unique_ptr<Expression> buildExpression(std::string_view expression) {
     std::cout << "Processing expression " << expression << "\n";
     std::vector<size_t> openBracketsIdx;
 
+    if (expression.size() <= 0) {
+        return nullptr;
+    }
+
     std::string modifiedExpression;
     if (signs.count(expression.front()) && 
                                 expression.size() > 1 && expression[1] == '(') {
