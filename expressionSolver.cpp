@@ -127,9 +127,21 @@ std::unique_ptr<Expression> buildExpression(std::string_view expression) {
     static std::unordered_set<char> operators{'+','*','/','-'};
     // temporary dirty hack 
     static std::unordered_map<char, int> operatorsPriority{{'+', 0}, {'-', 0}, {'*', 1}, {'/', 1}};
+    static std::unordered_set<char> signs{'+','-'};
 
     std::cout << "Processing expression " << expression << "\n";
     std::vector<size_t> openBracketsIdx;
+
+    std::string modifiedExpression;
+    if (signs.count(expression.front()) && 
+                                expression.size() > 1 && expression[1] == '(') {
+        // deal with signs in front of parentheses
+        auto sign = expression.front();
+        expression.remove_prefix(1);
+        modifiedExpression = sign + std::string("1*") + std::string(expression);
+        expression = modifiedExpression;
+    }
+
     // flag to check if we need to remove extra brackets e.g. (a+b) to a+b
     bool needsParenthesisPruning = (expression.front() == '(');
 
