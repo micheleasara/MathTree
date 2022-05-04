@@ -11,7 +11,8 @@
 #include <sstream>
 #include <vector>
 
-static std::unordered_set<char> operators{'+','*','/','-'};
+// temporary dirty hack
+static std::unordered_map<char, int> operatorsPriority{{'+', 0}, {'-', 0}, {'*', 1}, {'/', 1}};
 
 class Expression {
     public:
@@ -126,8 +127,6 @@ class BinaryExpressionFactory final {
 };
 
 std::unique_ptr<Expression> buildExpression(std::string_view expression) {
-    // temporary dirty hack 
-    static std::unordered_map<char, int> operatorsPriority{{'+', 0}, {'-', 0}, {'*', 1}, {'/', 1}};
     static std::unordered_set<char> signs{'+','-'};
 
     std::cout << "Processing expression " << expression << "\n";
@@ -173,7 +172,7 @@ std::unique_ptr<Expression> buildExpression(std::string_view expression) {
     size_t lowestPriorityOperatorIdx = 0;
     size_t topLevelOperatorsCount = 0;
     for (size_t i = 0; i < expression.size(); ++i) {
-        if (openBracketsIdx.empty() && operators.count(expression[i])) {
+        if (openBracketsIdx.empty() && operatorsPriority.count(expression[i])) {
             ++topLevelOperatorsCount;
             if (lowestPriorityOperatorIdx <= 0 ||
                         operatorsPriority[expression[lowestPriorityOperatorIdx]] > operatorsPriority[expression[i]]) {
@@ -234,7 +233,7 @@ int main() {
         std::vector<size_t> pendingClosuresPerLevel{0};
         for (size_t i = 0; i < input.size(); ++i) {
             if (pendingClosuresPerLevel.back() > 0 &&
-                                      (input[i] == ')' || operators.count(input[i]))) {
+                                      (input[i] == ')' || operatorsPriority.count(input[i]))) {
                 input.insert(i, pendingClosuresPerLevel.back(), ')');
                 // i must not be increased in case of consecutive non-associative operators (e.g. a-b-c)
                 pendingClosuresPerLevel.back() = 0;
