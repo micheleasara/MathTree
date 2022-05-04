@@ -142,8 +142,10 @@ std::unique_ptr<Expression> buildExpression(std::string_view expression) {
         // deal with signs in front of parentheses
         auto sign = expression.front();
         expression.remove_prefix(1);
-        modifiedExpression = sign + std::string("1*") + std::string(expression);
-        expression = modifiedExpression;
+        if (sign == '-') {
+            modifiedExpression = sign + std::string("1*") + std::string(expression);
+            expression = modifiedExpression;
+        }
     }
 
     // flag to check if we need to remove extra brackets e.g. (a+b) to a+b
