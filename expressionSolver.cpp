@@ -11,6 +11,8 @@
 #include <sstream>
 #include <vector>
 
+static std::unordered_set<char> operators{'+','*','/','-'};
+
 class Expression {
     public:
     virtual double evaluate() const = 0;
@@ -124,7 +126,6 @@ class BinaryExpressionFactory final {
 };
 
 std::unique_ptr<Expression> buildExpression(std::string_view expression) {
-    static std::unordered_set<char> operators{'+','*','/','-'};
     // temporary dirty hack 
     static std::unordered_map<char, int> operatorsPriority{{'+', 0}, {'-', 0}, {'*', 1}, {'/', 1}};
     static std::unordered_set<char> signs{'+','-'};
@@ -148,7 +149,6 @@ std::unique_ptr<Expression> buildExpression(std::string_view expression) {
 
     // flag to check if we need to remove extra brackets e.g. (a+b) to a+b
     bool needsParenthesisPruning = (expression.front() == '(');
-
     for (size_t i = 0; i < expression.size(); ++i) {
         if (expression[i] == '(') {
             openBracketsIdx.push_back(i);
@@ -198,6 +198,7 @@ std::unique_ptr<Expression> buildExpression(std::string_view expression) {
 }
 
 int main() {
+    std::unordered_map<char, std::string> nonAssocOperMap{{'-', "+("}, {'/', "*(1"}};
     while(true) {
         std::string input;
         std::cout << "Enter an expression:\n";
@@ -228,7 +229,36 @@ int main() {
         if (error) {
             return -1;
         }
-        
+
+        // TODO: reduce to O(N)
+        std::vector<size_t> pendingClosuresPerLevel{0};
+        for (size_t i = 0; i < input.size(); ++i) {
+            if (pendingClosuresPerLevel.back() > 0 &&
+                                      (input[i] == ')' || operators.count(input[i]))) {
+                input.insert(i, pendingClosuresPerLevel.back(), ')');
+                // i must not be increased in case of consecutive non-associative operators (e.g. a-b-c)
+                pendingClosuresPerLevel.back() = 0;
+            } else if (input[i] == ')') {
+                input.insert(i, pendingClosuresPerLevel.back(), ')');
+                i += pendingClosuresPerLevel.back();
+                pendingClosuresPerLevel.back() = 0;
+                if (pendingClosuresPerLevel.size() > 1) {
+                    pendingClosuresPerLevel.pop_back();
+                }
+                assert(pendingClosuresPerLevel.size() > 0); // one level at all times
+            } else if (input[i] == '(') {
+                pendingClosuresPerLevel.push_back(0);
+            } else if (nonAssocOperMap.count(input[i]) && pendingClosuresPerLevel.back() <= 0) {
+                auto& expr = nonAssocOperMap[input[i]];
+                input.insert(i, expr);
+                i += expr.size();
+                ++pendingClosuresPerLevel.back();
+            }
+        }
+        if (pendingClosuresPerLevel.back() > 0) {
+            input.insert(input.size(), pendingClosuresPerLevel.back(), ')');
+        }
+
         if (auto expression = buildExpression(input)) {
             std::cout << "Result is " << expression->evaluate() << "\n";
         } else {
