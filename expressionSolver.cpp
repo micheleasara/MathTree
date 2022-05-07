@@ -231,36 +231,32 @@ int main() {
             return -1;
         }
 
-        // TODO: reduce to O(N)
+        std::string processedInput;
+        processedInput.reserve(3*input.size());
         std::vector<size_t> pendingClosuresPerLevel{0};
         for (size_t i = 0; i < input.size(); ++i) {
+            assert(pendingClosuresPerLevel.size() > 0); // at least one level at all times
             if (pendingClosuresPerLevel.back() > 0 &&
                                       (input[i] == ')' || operatorsPriority.count(input[i]))) {
-                input.insert(i, pendingClosuresPerLevel.back(), ')');
-                // i must not be increased in case of consecutive non-associative operators (e.g. a-b-c)
+                processedInput.append(pendingClosuresPerLevel.back(), ')');
                 pendingClosuresPerLevel.back() = 0;
-            } else if (input[i] == ')') {
-                input.insert(i, pendingClosuresPerLevel.back(), ')');
-                i += pendingClosuresPerLevel.back();
-                pendingClosuresPerLevel.back() = 0;
-                if (pendingClosuresPerLevel.size() > 1) {
-                    pendingClosuresPerLevel.pop_back();
-                }
-                assert(pendingClosuresPerLevel.size() > 0); // one level at all times
+            }
+
+            if (input[i] == ')') {
+                pendingClosuresPerLevel.pop_back();
             } else if (input[i] == '(') {
                 pendingClosuresPerLevel.push_back(0);
             } else if (nonAssocOperMap.count(input[i]) && pendingClosuresPerLevel.back() <= 0) {
-                auto& expr = nonAssocOperMap[input[i]];
-                input.insert(i, expr);
-                i += expr.size();
+                processedInput.append(nonAssocOperMap[input[i]]);
                 ++pendingClosuresPerLevel.back();
             }
+            processedInput.append(1, input[i]);
         }
         if (pendingClosuresPerLevel.back() > 0) {
-            input.insert(input.size(), pendingClosuresPerLevel.back(), ')');
+            processedInput.append(pendingClosuresPerLevel.back(), ')');
         }
 
-        if (auto expression = buildExpression(input)) {
+        if (auto expression = buildExpression(processedInput)) {
             std::cout << "Result is " << expression->evaluate() << "\n";
         } else {
             std::cerr << "Invalid input\n";
