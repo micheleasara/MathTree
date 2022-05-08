@@ -14,9 +14,6 @@ int main() {
         std::string input;
         std::cout << "Enter an expression:\n";
         std::getline(std::cin, input);
-        auto it = std::remove_if(input.begin(), input.end(),
-                                 [](char c) { return std::isspace(c); });
-        input.erase(it, input.end());
 
         std::vector<size_t> openBracketsIdx;
         bool error = false;
@@ -40,6 +37,10 @@ int main() {
         if (error) {
             return -1;
         }
+
+        auto it = std::remove_if(input.begin(), input.end(),
+                            [](char c) { return std::isspace(c); });
+        input.erase(it, input.end());
 
         if (auto expression = ExpressionFactory::parse(input)) {
             std::cout << "Result is " << expression->evaluate() << "\n";
