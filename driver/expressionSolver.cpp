@@ -8,7 +8,7 @@
 #include <vector>
 
 int main() {
-    using namespace MathTree;
+    using MathTree::ExpressionFactory;
 
     while(true) {
         std::string input;
