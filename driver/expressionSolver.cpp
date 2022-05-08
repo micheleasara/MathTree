@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <cctype>
-#include "Expression.hpp"
 #include <iostream>
+#include "Expression.hpp"
 #include <unordered_set>
 #include <stack>
 #include <string>
