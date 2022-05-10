@@ -12,4 +12,6 @@ FetchContent_MakeAvailable(googletest)
 
 add_executable(NumbersTest NumbersTest.cpp)
 target_link_libraries(NumbersTest gtest_main MathTree)
-add_test(NAME NumbersTest COMMAND NumbersTest)
+
+include(GoogleTest)
+gtest_discover_tests(NumbersTest)
