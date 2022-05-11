@@ -10,8 +10,13 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(NumbersTest NumbersTest.cpp)
-target_link_libraries(NumbersTest gtest_main MathTree)
+set(TestingLibs gtest_main gmock_main MathTree)
 
 include(GoogleTest)
+add_executable(NumbersTest NumbersTest.cpp)
+target_link_libraries(NumbersTest ${TestingLibs})
 gtest_discover_tests(NumbersTest)
+
+add_executable(OperationsTest OperationsTest.cpp)
+target_link_libraries(OperationsTest ${TestingLibs})
+gtest_discover_tests(OperationsTest)

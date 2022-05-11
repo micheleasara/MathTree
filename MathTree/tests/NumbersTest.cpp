@@ -10,6 +10,8 @@ TEST(NumbersTest, EvaluatingReturnsTheNumberItself) {
 
 TEST(NumbersTest, ReturnsNullWhenParsingFails) {
     EXPECT_EQ(RealNumber::parse(""), nullptr);
+    EXPECT_EQ(RealNumber::parse("a"), nullptr);
+    EXPECT_EQ(RealNumber::parse("+"), nullptr);
 }
 
 TEST(NumbersTest, CanParseAPositiveIntegerWithImplicitSign) {
