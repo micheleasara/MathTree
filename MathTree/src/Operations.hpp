@@ -8,25 +8,25 @@ namespace MathTree {
 
 class Addition: public BinaryExpression {
     public:
-    Addition(std::unique_ptr<Expression> left, std::unique_ptr<Expression> right);
+    using BinaryExpression::BinaryExpression;
     double evaluate() const override;
 };
 
 class Subtraction: public BinaryExpression {
     public:
-    Subtraction(std::unique_ptr<Expression> left, std::unique_ptr<Expression> right);
+    using BinaryExpression::BinaryExpression;
     double evaluate() const override;
 };
 
 class Multiplication: public BinaryExpression {
     public:
-    Multiplication(std::unique_ptr<Expression> left, std::unique_ptr<Expression> right);
+    using BinaryExpression::BinaryExpression;
     double evaluate() const override;
 };
 
 class Division: public BinaryExpression {
     public:
-    Division(std::unique_ptr<Expression> left, std::unique_ptr<Expression> right);
+    using BinaryExpression::BinaryExpression;
     double evaluate() const override;
 };
 
