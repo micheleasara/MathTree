@@ -15,7 +15,7 @@ namespace MathTree {
 // temporary dirty hack
 std::unordered_map<char, int> operatorsPriority{{'+', 0}, {'-', 0}, {'*', 1}, {'/', 1}};
 
-BinaryExpression::BinaryExpression(std::unique_ptr<Expression> left, std::unique_ptr<Expression> right): 
+BinaryExpression::BinaryExpression(std::shared_ptr<Expression> left, std::shared_ptr<Expression> right): 
                                                                         m_left(std::move(left)), m_right(std::move(right)) {}
 
 Expression const& BinaryExpression::left() const {
@@ -26,7 +26,7 @@ Expression const& BinaryExpression::right() const {
 }
 
 
-std::unique_ptr<Expression> buildExpression(std::string_view expression) {
+std::shared_ptr<Expression> buildExpression(std::string_view expression) {
     static std::unordered_set<char> signs{'+','-'};
 
     std::cout << "Processing expression " << expression << "\n";
@@ -134,27 +134,27 @@ std::string wrapNonAssociativeOperators(std::string_view input) {
     return processedInput;
 }
 
-std::unique_ptr<BinaryExpression> ExpressionFactory::makeBinary(std::unique_ptr<Expression> left,
-                                                                    std::unique_ptr<Expression> right,
+std::shared_ptr<BinaryExpression> ExpressionFactory::makeBinary(std::shared_ptr<Expression> left,
+                                                                    std::shared_ptr<Expression> right,
                                                                     char operation) {
     if (left == nullptr || right == nullptr) {
         return nullptr;
     }
 
     if (operation == '+') {
-        return std::make_unique<Addition>(std::move(left), std::move(right));
+        return std::make_shared<Addition>(std::move(left), std::move(right));
     } else if (operation == '-') {
-        return std::make_unique<Subtraction>(std::move(left), std::move(right));
+        return std::make_shared<Subtraction>(std::move(left), std::move(right));
     } else if (operation == '*') {
-        return std::make_unique<Multiplication>(std::move(left), std::move(right));
+        return std::make_shared<Multiplication>(std::move(left), std::move(right));
     } else if (operation == '/') {
-        return std::make_unique<Division>(std::move(left), std::move(right));
+        return std::make_shared<Division>(std::move(left), std::move(right));
     }
 
     return nullptr;
 }
 
-std::unique_ptr<Expression> ExpressionFactory::parse(std::string_view input) {
+std::shared_ptr<Expression> ExpressionFactory::parse(std::string_view input) {
     auto processedInput = wrapNonAssociativeOperators(input);
     return buildExpression(processedInput);
 }

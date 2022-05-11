@@ -9,7 +9,7 @@ namespace MathTree {
 class RealNumber: public Expression 
 {
     public:
-    static std::unique_ptr<RealNumber> parse(std::string_view input);
+    static std::shared_ptr<RealNumber> parse(std::string_view input);
 
     RealNumber(double value);
 

@@ -17,21 +17,21 @@ class Expression {
 
 class BinaryExpression: public Expression {
     public:
-    BinaryExpression(std::unique_ptr<Expression> left, std::unique_ptr<Expression> right);
+    BinaryExpression(std::shared_ptr<Expression> left, std::shared_ptr<Expression> right);
 
     Expression const& left() const;
     Expression const& right() const;
 
     private:
-    std::unique_ptr<Expression> m_left;
-    std::unique_ptr<Expression> m_right;
+    std::shared_ptr<Expression> m_left;
+    std::shared_ptr<Expression> m_right;
 };
 
 class ExpressionFactory final {
     public:
-    static std::unique_ptr<Expression> parse(std::string_view input);
-    static std::unique_ptr<BinaryExpression> makeBinary(std::unique_ptr<Expression> left,
-                                                        std::unique_ptr<Expression> right,
+    static std::shared_ptr<Expression> parse(std::string_view input);
+    static std::shared_ptr<BinaryExpression> makeBinary(std::shared_ptr<Expression> left,
+                                                        std::shared_ptr<Expression> right,
                                                         char operation);
 
     private:
