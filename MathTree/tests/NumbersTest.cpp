@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Numbers.hpp"
 #include <gtest/gtest.h>
 
@@ -6,6 +7,14 @@ using MathTree::RealNumber;
 TEST(NumbersTest, EvaluatingReturnsTheNumberItself) {
     RealNumber number{42};
     EXPECT_EQ(number.evaluate(), 42);
+}
+
+TEST(NumbersTest, CreatingARealNumberWithInfinityThrows) {
+    EXPECT_ANY_THROW(RealNumber{INFINITY});
+}
+
+TEST(NumbersTest, CreatingARealNumberWithNaNThrows) {
+    EXPECT_ANY_THROW(RealNumber{NAN});
 }
 
 TEST(NumbersTest, ReturnsNullWhenParsingFails) {
