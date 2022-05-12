@@ -40,9 +40,16 @@ TEST_F(OperationsTest, EvaluatingAMultiplicationReturnsTheProductOfTheValuesOfBo
 
 TEST_F(OperationsTest, EvaluatingADivisionReturnsTheQuotientOfTheValuesOfTheDividendAndDivisor) {
     EXPECT_CALL(*mock, evaluate())
-                .WillOnce(Return(0.6))
-                .WillOnce(Return(2));
+                .WillOnce(Return(2)) // rhs
+                .WillOnce(Return(0.6)); // lhs
 
     Division divider{mock, std::move(mock)};
     EXPECT_DOUBLE_EQ(divider.evaluate(), 0.3);
+}
+
+TEST_F(OperationsTest, DividingByZeroThrows) {
+    EXPECT_CALL(*mock, evaluate()).WillOnce(Return(0));
+
+    Division divider{mock, std::move(mock)};
+    EXPECT_ANY_THROW(divider.evaluate());
 }
