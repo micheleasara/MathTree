@@ -20,3 +20,7 @@ gtest_discover_tests(NumbersTest)
 add_executable(OperationsTest OperationsTest.cpp)
 target_link_libraries(OperationsTest ${TestingLibs})
 gtest_discover_tests(OperationsTest)
+
+add_executable(ExpressionTest ExpressionTest.cpp)
+target_link_libraries(ExpressionTest ${TestingLibs})
+gtest_discover_tests(ExpressionTest)
