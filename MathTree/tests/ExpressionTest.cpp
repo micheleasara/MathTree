@@ -107,3 +107,23 @@ TEST(ExpressionTest, UnpairedClosingBracketsAreReportedAsErrorWithTheCorrespondi
     auto closingError = ExpressionFactory::ValidationErrors::UnpairedClosingBracket;
     EXPECT_THAT(errors, ElementsAre(Pair(6, closingError)));
 }
+
+TEST(ExpressionTest, TwoSignsInARowAreReportedAsErrorWithTheCorrespondingIndex) {
+    auto errors = ExpressionFactory::validate("2++3--5");
+    auto operatorsError = ExpressionFactory::ValidationErrors::TwoOperatorsInARow;
+    EXPECT_THAT(errors, ElementsAre(Pair(2, operatorsError),
+                                    Pair(5, operatorsError)));
+}
+
+TEST(ExpressionTest, ASignAtTheEndIsReportedAsErrorWithTheCorrespondingIndex) {
+    auto errors = ExpressionFactory::validate("2+3-");
+    auto operatorsError = ExpressionFactory::ValidationErrors::IncompleteOperation;
+    EXPECT_THAT(errors, ElementsAre(Pair(3, operatorsError)));
+}
+
+TEST(ExpressionTest, ASignBeforeAClosingBracketIsReportedAsErrorWithTheCorrespondingIndex) {
+    auto errors = ExpressionFactory::validate("2+(3-)+(9+)+5");
+    auto operatorsError = ExpressionFactory::ValidationErrors::IncompleteOperation;
+    EXPECT_THAT(errors, ElementsAre(Pair(4, operatorsError),
+                                    Pair(9, operatorsError)));
+}

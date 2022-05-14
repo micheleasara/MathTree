@@ -34,7 +34,9 @@ class ExpressionFactory final {
 
     enum class ValidationErrors {
         UnpairedOpeningBracket,
-        UnpairedClosingBracket
+        UnpairedClosingBracket,
+        TwoOperatorsInARow,
+        IncompleteOperation
     };
     using IndexErrorPairs = std::vector<std::pair<size_t, ValidationErrors>>;
 

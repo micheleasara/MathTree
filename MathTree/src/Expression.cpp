@@ -26,8 +26,11 @@ Expression const& BinaryExpression::right() const {
 }
 
 ExpressionFactory::IndexErrorPairs ExpressionFactory::validate(std::string_view input) {
-    IndexErrorPairs idxErrorPairs;
+    if (input.size() <= 0) {
+        return IndexErrorPairs{};
+    }
 
+    IndexErrorPairs idxErrorPairs;
     std::vector<size_t> openBracketsIdx;
     bool error = false;
     for (size_t i = 0; i < input.size(); ++i) {
@@ -39,12 +42,23 @@ ExpressionFactory::IndexErrorPairs ExpressionFactory::validate(std::string_view 
             } else {
                 idxErrorPairs.emplace_back(i, ValidationErrors::UnpairedClosingBracket);
             }
-        }
+            if (i > 1 && operatorsPriority.count(input[i - 1])) {
+                idxErrorPairs.emplace_back(i - 1, ValidationErrors::IncompleteOperation);
+            }
+        } else if (operatorsPriority.count(input[i]) && 
+                                               i > 0 && operatorsPriority.count(input[i-1])) {
+            idxErrorPairs.emplace_back(i, ValidationErrors::TwoOperatorsInARow);
+        } 
+    }
+
+    if (operatorsPriority.count(input.back())) {
+        idxErrorPairs.emplace_back(input.size() - 1, ValidationErrors::IncompleteOperation);
     }
 
     for (size_t i = 0; i < openBracketsIdx.size(); ++i) {
         idxErrorPairs.emplace_back(openBracketsIdx[i], ValidationErrors::UnpairedOpeningBracket);
     }
+
     return idxErrorPairs;
 }
 
