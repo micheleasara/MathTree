@@ -3,6 +3,8 @@
 #include "Expression.hpp"
 
 using MathTree::ExpressionFactory;
+using ::testing::ElementsAre;
+using ::testing::Pair;
 
 TEST(ExpressionTest, IgnoresUselessParentheses) {
     auto result = ExpressionFactory::parse("((-2.3))");
@@ -86,4 +88,22 @@ TEST(ExpressionTest, CanInterpretSignInteractionBetweenSignsAcrossParentheses) {
     result = ExpressionFactory::parse("+(-3)");
     ASSERT_NE(result, nullptr);
     EXPECT_EQ(result->evaluate(), -3);
+}
+
+TEST(ExpressionTest, CanValidateCorrectInputs) {
+    auto errors = ExpressionFactory::validate("1+(3-2)");
+    EXPECT_EQ(errors.size(), 0);
+}
+
+TEST(ExpressionTest, UnpairedOpeningBracketsAreReportedAsErrorWithTheCorrespondingIndex) {
+    auto errors = ExpressionFactory::validate("2-(1 + (3");
+    auto openingError = ExpressionFactory::ValidationErrors::UnpairedOpeningBracket;
+    EXPECT_THAT(errors, ElementsAre(Pair(2, openingError),
+                                    Pair(7, openingError)));
+}
+
+TEST(ExpressionTest, UnpairedClosingBracketsAreReportedAsErrorWithTheCorrespondingIndex) {
+    auto errors = ExpressionFactory::validate("(2-1) )-3");
+    auto closingError = ExpressionFactory::ValidationErrors::UnpairedClosingBracket;
+    EXPECT_THAT(errors, ElementsAre(Pair(6, closingError)));
 }

@@ -25,6 +25,28 @@ Expression const& BinaryExpression::right() const {
     return *m_right;
 }
 
+ExpressionFactory::IndexErrorPairs ExpressionFactory::validate(std::string_view input) {
+    IndexErrorPairs idxErrorPairs;
+
+    std::vector<size_t> openBracketsIdx;
+    bool error = false;
+    for (size_t i = 0; i < input.size(); ++i) {
+        if (input[i] == '(') {
+            openBracketsIdx.push_back(i);
+        } else if (input[i] == ')') {
+            if (openBracketsIdx.size() > 0) {
+                openBracketsIdx.pop_back();
+            } else {
+                idxErrorPairs.emplace_back(i, ValidationErrors::UnpairedClosingBracket);
+            }
+        }
+    }
+
+    for (size_t i = 0; i < openBracketsIdx.size(); ++i) {
+        idxErrorPairs.emplace_back(openBracketsIdx[i], ValidationErrors::UnpairedOpeningBracket);
+    }
+    return idxErrorPairs;
+}
 
 std::shared_ptr<Expression> buildExpression(std::string_view expression) {
     static std::unordered_set<char> signs{'+','-'};
@@ -158,5 +180,4 @@ std::shared_ptr<Expression> ExpressionFactory::parse(std::string_view input) {
     auto processedInput = wrapNonAssociativeOperators(input);
     return buildExpression(processedInput);
 }
-
 }

@@ -3,6 +3,8 @@
 
 #include <memory>
 #include <string_view>
+#include <utility>
+#include <vector>
 
 namespace MathTree {
 class Expression {
@@ -29,6 +31,14 @@ class BinaryExpression: public Expression {
 
 class ExpressionFactory final {
     public:
+
+    enum class ValidationErrors {
+        UnpairedOpeningBracket,
+        UnpairedClosingBracket
+    };
+    using IndexErrorPairs = std::vector<std::pair<size_t, ValidationErrors>>;
+
+    static IndexErrorPairs validate(std::string_view input);
     static std::shared_ptr<Expression> parse(std::string_view input);
     static std::shared_ptr<BinaryExpression> makeBinary(std::shared_ptr<Expression> left,
                                                         std::shared_ptr<Expression> right,

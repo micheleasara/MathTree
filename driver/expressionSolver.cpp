@@ -15,27 +15,19 @@ int main() {
         std::cout << "Enter an expression:\n";
         std::getline(std::cin, input);
 
-        std::vector<size_t> openBracketsIdx;
-        bool error = false;
-        for (size_t i = 0; i < input.size(); ++i) {
-            if (input[i] == '(') {
-                openBracketsIdx.push_back(i);
-            } else if (input[i] == ')') {
-                if (openBracketsIdx.size() > 0) {
-                    openBracketsIdx.pop_back();
-                } else {
-                    std::cerr << "Unpaired ')' at index " << i << "\n";
-                    error = true;
-                }
+        auto idxErrorPairs = ExpressionFactory::validate(input);
+        for (auto const& [idx, error]: idxErrorPairs) {
+            switch (error) {
+                case ExpressionFactory::ValidationErrors::UnpairedClosingBracket:
+                    std::cerr << "Unpaired ')' at index " << idx << "\n"; break;
+                case ExpressionFactory::ValidationErrors::UnpairedOpeningBracket:
+                    std::cerr << "Unpaired '(' at index " << idx << "\n"; break;
+                default:
+                    std::cerr << "Unknown error at index " << idx << "\n"; break;
             }
         }
-
-        error = error || openBracketsIdx.size() > 0;
-        for (size_t i = 0; i < openBracketsIdx.size(); ++i) {
-            std::cerr << "Unpaired '(' at index " << openBracketsIdx[i] << "\n";
-        }
-        if (error) {
-            return -1;
+        if (!idxErrorPairs.empty()) {
+            continue;
         }
 
         auto it = std::remove_if(input.begin(), input.end(),
@@ -46,7 +38,7 @@ int main() {
             std::cout << "Result is " << expression->evaluate() << "\n";
         } else {
             std::cerr << "Invalid input\n";
-            return -1;
+            continue;
         }
         std::cout << std::endl;
     }
