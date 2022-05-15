@@ -199,7 +199,12 @@ std::shared_ptr<BinaryExpression> ExpressionFactory::makeBinary(std::shared_ptr<
 }
 
 std::shared_ptr<Expression> ExpressionFactory::parse(std::string_view input) {
-    auto processedInput = wrapNonAssociativeOperators(input);
+    std::string processedInput;
+    processedInput.reserve(input.size());
+    std::copy_if(input.begin(), input.end(), std::back_inserter(processedInput), [](unsigned char ch) {
+        return !std::isspace(ch);
+    });
+    processedInput = wrapNonAssociativeOperators(processedInput);
     return buildExpression(processedInput);
 }
 }
