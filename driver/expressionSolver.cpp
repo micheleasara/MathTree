@@ -22,6 +22,12 @@ int main() {
                     std::cerr << "Unpaired ')' at index " << idx << "\n"; break;
                 case ExpressionFactory::ValidationErrors::UnpairedOpeningBracket:
                     std::cerr << "Unpaired '(' at index " << idx << "\n"; break;
+                case ExpressionFactory::ValidationErrors::MissingOperator:
+                    std::cerr << "Missing operator at index " << idx << "\n"; break;
+                case ExpressionFactory::ValidationErrors::TwoOperatorsInARow:
+                    std::cerr << "Invalid second operator at index " << idx << "\n"; break;
+                case ExpressionFactory::ValidationErrors::IncompleteOperation:
+                    std::cerr << "Operation with a missing operand at index " << idx << "\n"; break;
                 default:
                     std::cerr << "Unknown error at index " << idx << "\n"; break;
             }

@@ -36,7 +36,8 @@ class ExpressionFactory final {
         UnpairedOpeningBracket,
         UnpairedClosingBracket,
         TwoOperatorsInARow,
-        IncompleteOperation
+        IncompleteOperation,
+        MissingOperator
     };
     using IndexErrorPairs = std::vector<std::pair<size_t, ValidationErrors>>;
 

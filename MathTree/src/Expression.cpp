@@ -36,6 +36,9 @@ ExpressionFactory::IndexErrorPairs ExpressionFactory::validate(std::string_view 
     for (size_t i = 0; i < input.size(); ++i) {
         if (input[i] == '(') {
             openBracketsIdx.push_back(i);
+            if (i > 0 && std::isdigit(input[i - 1])) {
+                idxErrorPairs.emplace_back(i, ValidationErrors::MissingOperator);
+            }
         } else if (input[i] == ')') {
             if (openBracketsIdx.size() > 0) {
                 openBracketsIdx.pop_back();
@@ -48,7 +51,9 @@ ExpressionFactory::IndexErrorPairs ExpressionFactory::validate(std::string_view 
         } else if (operatorsPriority.count(input[i]) && 
                                                i > 0 && operatorsPriority.count(input[i-1])) {
             idxErrorPairs.emplace_back(i, ValidationErrors::TwoOperatorsInARow);
-        } 
+        } else if (std::isdigit(input[i]) && i > 0 && input[i - 1] == ')') {
+            idxErrorPairs.emplace_back(i, ValidationErrors::MissingOperator);
+        }
     }
 
     if (operatorsPriority.count(input.back())) {

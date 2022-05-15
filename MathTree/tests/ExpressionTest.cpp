@@ -127,3 +127,15 @@ TEST(ExpressionTest, ASignBeforeAClosingBracketIsReportedAsErrorWithTheCorrespon
     EXPECT_THAT(errors, ElementsAre(Pair(4, operatorsError),
                                     Pair(9, operatorsError)));
 }
+
+TEST(ExpressionTest, ANumberBeforeAnOpeningBracketIsReportedAsErrorWithTheCorrespondingIndex) {
+    auto errors = ExpressionFactory::validate("2(3-1)");
+    auto operatorsError = ExpressionFactory::ValidationErrors::MissingOperator;
+    EXPECT_THAT(errors, ElementsAre(Pair(1, operatorsError)));
+}
+
+TEST(ExpressionTest, ANumberAfterAClosingBracketIsReportedAsErrorWithTheCorrespondingIndex) {
+    auto errors = ExpressionFactory::validate("2+(3-1)3");
+    auto operatorsError = ExpressionFactory::ValidationErrors::MissingOperator;
+    EXPECT_THAT(errors, ElementsAre(Pair(7, operatorsError)));
+}
