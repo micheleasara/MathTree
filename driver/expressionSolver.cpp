@@ -11,12 +11,14 @@ int main() {
     using MathTree::ExpressionFactory;
 
     while(true) {
-        std::cout << "\n";
         std::string input;
         std::cout << "Enter an expression:\n";
         std::getline(std::cin, input);
 
         auto idxErrorPairs = ExpressionFactory::validate(input);
+        std::sort(idxErrorPairs.begin(), idxErrorPairs.end(), [](auto const& leftPair, auto const& rightPair) {
+            return leftPair.first < rightPair.first;
+        });
         for (auto const& [idx, error]: idxErrorPairs) {
             switch (error) {
                 case ExpressionFactory::ValidationErrors::UnpairedClosingBracket:
@@ -34,6 +36,7 @@ int main() {
             }
         }
         if (!idxErrorPairs.empty()) {
+            std::cout << std::endl;
             continue;
         }
 
@@ -45,7 +48,6 @@ int main() {
             std::cout << "Result is " << expression->evaluate() << "\n";
         } else {
             std::cerr << "Invalid input\n";
-            continue;
         }
         std::cout << std::endl;
     }

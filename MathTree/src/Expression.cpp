@@ -75,7 +75,6 @@ ExpressionFactory::IndexErrorPairs ExpressionFactory::validate(std::string_view 
 std::shared_ptr<Expression> buildExpression(std::string_view expression) {
     static std::unordered_set<char> signs{'+','-'};
 
-    std::cout << "Processing expression " << expression << "\n";
     std::vector<size_t> openBracketsIdx;
 
     if (expression.size() <= 0) {
@@ -112,7 +111,6 @@ std::shared_ptr<Expression> buildExpression(std::string_view expression) {
     if (needsParenthesisPruning) {
         expression.remove_prefix(1);
         expression.remove_suffix(1);
-        std::cout << "Pruned expression " << expression << "\n";
         // handle cases where multiple pruning steps are required e.g. (((a+b)))
         return buildExpression(expression);
     }
