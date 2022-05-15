@@ -11,6 +11,7 @@ int main() {
     using MathTree::ExpressionFactory;
 
     while(true) {
+        std::cout << "\n";
         std::string input;
         std::cout << "Enter an expression:\n";
         std::getline(std::cin, input);

@@ -33,10 +33,11 @@ ExpressionFactory::IndexErrorPairs ExpressionFactory::validate(std::string_view 
     IndexErrorPairs idxErrorPairs;
     std::vector<size_t> openBracketsIdx;
     bool error = false;
+    int lastNonSpaceIdx = -1;
     for (size_t i = 0; i < input.size(); ++i) {
         if (input[i] == '(') {
             openBracketsIdx.push_back(i);
-            if (i > 0 && std::isdigit(input[i - 1])) {
+            if (lastNonSpaceIdx > -1 && std::isdigit(input[lastNonSpaceIdx])) {
                 idxErrorPairs.emplace_back(i, ValidationErrors::MissingOperator);
             }
         } else if (input[i] == ')') {
@@ -45,19 +46,23 @@ ExpressionFactory::IndexErrorPairs ExpressionFactory::validate(std::string_view 
             } else {
                 idxErrorPairs.emplace_back(i, ValidationErrors::UnpairedClosingBracket);
             }
-            if (i > 1 && operatorsPriority.count(input[i - 1])) {
-                idxErrorPairs.emplace_back(i - 1, ValidationErrors::IncompleteOperation);
+            if (lastNonSpaceIdx > -1 && operatorsPriority.count(input[lastNonSpaceIdx])) {
+                idxErrorPairs.emplace_back(lastNonSpaceIdx, ValidationErrors::IncompleteOperation);
             }
         } else if (operatorsPriority.count(input[i]) && 
-                                               i > 0 && operatorsPriority.count(input[i-1])) {
+                                lastNonSpaceIdx > -1 && operatorsPriority.count(input[lastNonSpaceIdx])) {
             idxErrorPairs.emplace_back(i, ValidationErrors::TwoOperatorsInARow);
-        } else if (std::isdigit(input[i]) && i > 0 && input[i - 1] == ')') {
+        } else if (std::isdigit(input[i]) && lastNonSpaceIdx > -1 && input[lastNonSpaceIdx] == ')') {
             idxErrorPairs.emplace_back(i, ValidationErrors::MissingOperator);
+        }
+
+        if (!std::isspace(input[i])) {
+            lastNonSpaceIdx = static_cast<int>(i);
         }
     }
 
-    if (operatorsPriority.count(input.back())) {
-        idxErrorPairs.emplace_back(input.size() - 1, ValidationErrors::IncompleteOperation);
+    if (lastNonSpaceIdx > -1 && operatorsPriority.count(input[lastNonSpaceIdx])) {
+        idxErrorPairs.emplace_back(lastNonSpaceIdx, ValidationErrors::IncompleteOperation);
     }
 
     for (size_t i = 0; i < openBracketsIdx.size(); ++i) {

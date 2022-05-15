@@ -115,8 +115,21 @@ TEST(ExpressionTest, TwoSignsInARowAreReportedAsErrorWithTheCorrespondingIndex) 
                                     Pair(5, operatorsError)));
 }
 
+TEST(ExpressionTest, TwoSignsInARowAreReportedAsErrorWithTheCorrespondingIndexAndIgnoringSpaces) {
+    auto errors = ExpressionFactory::validate("2+ +3- -5");
+    auto operatorsError = ExpressionFactory::ValidationErrors::TwoOperatorsInARow;
+    EXPECT_THAT(errors, ElementsAre(Pair(3, operatorsError),
+                                    Pair(7, operatorsError)));
+}
+
 TEST(ExpressionTest, ASignAtTheEndIsReportedAsErrorWithTheCorrespondingIndex) {
     auto errors = ExpressionFactory::validate("2+3-");
+    auto operatorsError = ExpressionFactory::ValidationErrors::IncompleteOperation;
+    EXPECT_THAT(errors, ElementsAre(Pair(3, operatorsError)));
+}
+
+TEST(ExpressionTest, ASignAtTheEndIsReportedAsErrorWithTheCorrespondingIndexAndIgnoringSpaces) {
+    auto errors = ExpressionFactory::validate("2+3- ");
     auto operatorsError = ExpressionFactory::ValidationErrors::IncompleteOperation;
     EXPECT_THAT(errors, ElementsAre(Pair(3, operatorsError)));
 }
@@ -128,14 +141,33 @@ TEST(ExpressionTest, ASignBeforeAClosingBracketIsReportedAsErrorWithTheCorrespon
                                     Pair(9, operatorsError)));
 }
 
+TEST(ExpressionTest, ASignBeforeAClosingBracketIsReportedAsErrorWithTheCorrespondingIndexAndIgnoringSpaces) {
+    auto errors = ExpressionFactory::validate("2+(3- )+(9+ )+5");
+    auto operatorsError = ExpressionFactory::ValidationErrors::IncompleteOperation;
+    EXPECT_THAT(errors, ElementsAre(Pair(4, operatorsError),
+                                    Pair(10, operatorsError)));
+}
+
 TEST(ExpressionTest, ANumberBeforeAnOpeningBracketIsReportedAsErrorWithTheCorrespondingIndex) {
     auto errors = ExpressionFactory::validate("2(3-1)");
     auto operatorsError = ExpressionFactory::ValidationErrors::MissingOperator;
     EXPECT_THAT(errors, ElementsAre(Pair(1, operatorsError)));
 }
 
+TEST(ExpressionTest, ANumberBeforeAnOpeningBracketIsReportedAsErrorWithTheCorrespondingIndexAndIgnoringSpaces) {
+    auto errors = ExpressionFactory::validate("2 (3-1)");
+    auto operatorsError = ExpressionFactory::ValidationErrors::MissingOperator;
+    EXPECT_THAT(errors, ElementsAre(Pair(2, operatorsError)));
+}
+
 TEST(ExpressionTest, ANumberAfterAClosingBracketIsReportedAsErrorWithTheCorrespondingIndex) {
     auto errors = ExpressionFactory::validate("2+(3-1)3");
     auto operatorsError = ExpressionFactory::ValidationErrors::MissingOperator;
     EXPECT_THAT(errors, ElementsAre(Pair(7, operatorsError)));
+}
+
+TEST(ExpressionTest, ANumberAfterAClosingBracketIsReportedAsErrorWithTheCorrespondingIndexAndIgnoringSpaces) {
+    auto errors = ExpressionFactory::validate("2+(3-1) 3");
+    auto operatorsError = ExpressionFactory::ValidationErrors::MissingOperator;
+    EXPECT_THAT(errors, ElementsAre(Pair(8, operatorsError)));
 }
