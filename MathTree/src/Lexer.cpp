@@ -5,7 +5,7 @@
 
 namespace MathTree {
 
-auto constexpr initializer = {TokenType::PLUS, TokenType::MINUS,
+auto constexpr symbolsList = {TokenType::PLUS, TokenType::MINUS,
                                     TokenType::SLASH, TokenType::ASTERISK,
                                     TokenType::CARET,
                                     TokenType::OPENING_BRACKET, TokenType::CLOSING_BRACKET};
@@ -13,35 +13,26 @@ auto constexpr initializer = {TokenType::PLUS, TokenType::MINUS,
 ArithmeticLexer::ArithmeticLexer(): ArithmeticLexer("") {}
 
 ArithmeticLexer::ArithmeticLexer(std::string text): m_text(std::move(text)) {
-  for (auto const& type: initializer) {
-    m_symbols[symbolise(type)] = type;
-  }
+  m_matchers.reserve(2);
+  m_matchers.push_back(std::make_unique<SymbolMatcher>(symbolsList));
+  m_matchers.push_back(std::make_unique<UnsignedNumberMatcher>());
 }
 
 Token ArithmeticLexer::next() {
   while (m_currentIndex < m_text.length()) {
-    auto chr = m_text[m_currentIndex++];
-    
-    if (m_symbols.count(chr)) {
-      return {m_symbols[chr], std::string(1, chr)};
-    } else if (std::isdigit(chr) || chr == '.') {
-      int start = m_currentIndex - 1;
-      while (m_currentIndex < m_text.length()) {
-        if (std::isdigit(m_text[m_currentIndex]) || m_text[m_currentIndex] == '.') {
-          ++m_currentIndex;
-        } else {
-          break;
-        }
+    for (auto const& matcher: m_matchers) {
+      if (auto tokenOpt = matcher->match(m_text, m_currentIndex)) {
+        m_currentIndex += tokenOpt->text().size();
+        return *tokenOpt;
       }
-      std::string number = m_text.substr(start, m_currentIndex - start);
-      if (!Utils::parseDouble(number).has_value()) {
-        throw std::logic_error("Expected a number, but failed to extract it from \"" + 
-                                                           number + std::string("\"."));
-      }
-      return {TokenType::NUMBER, number};
     }
+    if (std::isspace(m_text[m_currentIndex])) {
+      ++m_currentIndex;
+      continue;
+    }
+    throw std::logic_error("Lexer could not extract token at index " +
+                                   std::to_string(m_currentIndex) + ".");
   }
-
   return {TokenType::STOP, ""};
 }
 
@@ -49,6 +40,5 @@ void ArithmeticLexer::reset(std::string newText) {
   m_text = std::move(newText);
   m_currentIndex = 0;
 }
-
 
 }

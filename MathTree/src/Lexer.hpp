@@ -1,9 +1,12 @@
 #ifndef MATHTREE_LEXER
 #define MATHTREE_LEXER
 
+#include <memory>
 #include <string>
 #include "Token.hpp"
+#include "TokenMatchers.hpp"
 #include <unordered_map>
+#include <vector>
 
 namespace MathTree {
 
@@ -24,9 +27,9 @@ public:
   void reset(std::string newText);
 
 private:
-  std::unordered_map<char, TokenType> m_symbols;
   std::string m_text;
   size_t m_currentIndex = 0;
+  std::vector<std::unique_ptr<TokenMatcher>> m_matchers;
 };
 
 }

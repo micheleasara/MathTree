@@ -55,3 +55,8 @@ TEST_F(ArithmeticLexerTest, canTokeniseAClosingBracket) {
 TEST_F(ArithmeticLexerTest, returnsASentinelValueWhenThereIsNoMoreInputThatNeedsToBeTokenised) {
   EXPECT_THAT(lexer.next(), Property(&Token::type, Eq(TokenType::STOP)));
 }
+
+TEST_F(ArithmeticLexerTest, throwsWhenACharacterIsNotRecognised) {
+  lexer.reset("\1");
+  EXPECT_ANY_THROW(lexer.next());
+}

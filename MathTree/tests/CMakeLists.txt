@@ -24,3 +24,7 @@ gtest_discover_tests(RealNumberTest)
 add_executable(BinaryExpressionTest BinaryExpressionTest.cpp)
 target_link_libraries(BinaryExpressionTest ${TestingLibs})
 gtest_discover_tests(BinaryExpressionTest)
+
+add_executable(MatchersTest MatchersTest.cpp)
+target_link_libraries(MatchersTest ${TestingLibs})
+gtest_discover_tests(MatchersTest)
