@@ -10,9 +10,9 @@ auto constexpr initializer = {TokenType::PLUS, TokenType::MINUS,
                                     TokenType::CARET,
                                     TokenType::OPENING_BRACKET, TokenType::CLOSING_BRACKET};
 
-ArithmeticLexer::ArithmeticLexer(std::string text) {
-  m_text = std::move(text);
+ArithmeticLexer::ArithmeticLexer(): ArithmeticLexer("") {}
 
+ArithmeticLexer::ArithmeticLexer(std::string text): m_text(std::move(text)) {
   for (auto const& type: initializer) {
     m_symbols[symbolise(type)] = type;
   }
@@ -44,5 +44,11 @@ Token ArithmeticLexer::next() {
 
   return {TokenType::STOP, ""};
 }
+
+void ArithmeticLexer::reset(std::string newText) {
+  m_text = std::move(newText);
+  m_currentIndex = 0;
+}
+
 
 }

@@ -25,6 +25,9 @@ public:
 
   TokenType type() const;
   std::string const& text() const;
+
+  bool operator==(Token const& other) const;
+  bool operator!=(Token const& other) const;
   
 private:
   TokenType m_type;

@@ -18,8 +18,10 @@ public:
 
 class ArithmeticLexer: public Lexer {
 public:
+  ArithmeticLexer();
   ArithmeticLexer(std::string text);
   Token next() override;
+  void reset(std::string newText);
 
 private:
   std::unordered_map<char, TokenType> m_symbols;

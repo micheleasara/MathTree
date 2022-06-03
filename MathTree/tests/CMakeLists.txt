@@ -13,6 +13,10 @@ FetchContent_MakeAvailable(googletest)
 set(TestingLibs gtest_main gmock_main MathTree)
 
 include(GoogleTest)
+add_executable(ArithmeticLexerTest ArithmeticLexerTest.cpp)
+target_link_libraries(ArithmeticLexerTest ${TestingLibs})
+gtest_discover_tests(ArithmeticLexerTest)
+
 add_executable(RealNumberTest RealNumberTest.cpp)
 target_link_libraries(RealNumberTest ${TestingLibs})
 gtest_discover_tests(RealNumberTest)

@@ -34,4 +34,11 @@ std::string const& Token::text() const {
   return m_text;
 }
 
+bool Token::operator==(Token const& other) const {
+  return other.m_text == m_text && other.m_type == m_type;
+}
+
+bool Token::operator!=(Token const& other) const {
+  return !operator==(other);
+}
 }
