@@ -21,39 +21,38 @@ TEST_F(ArithmeticLexerTest, resettingChangesTheInternalState) {
 
 TEST_F(ArithmeticLexerTest, canTokeniseAPositiveSign) {
   lexer.reset("+1");
-  EXPECT_THAT(lexer.next(),
-              Property(&Token::type, Eq(TokenType::PLUS)));
+  auto token = lexer.next();
+  EXPECT_EQ(token.type(), TokenType::PLUS);
 }
 
 TEST_F(ArithmeticLexerTest, canTokeniseANegativeSign) {
   lexer.reset("-1");
-  EXPECT_THAT(lexer.next(),
-              Property(&Token::type, Eq(TokenType::MINUS)));
+  auto token = lexer.next();
+  EXPECT_EQ(token.type(), TokenType::MINUS);
 }
 
 TEST_F(ArithmeticLexerTest, canTokeniseAnUnsignedNumber) {
   lexer.reset("100.2");
   auto token = lexer.next();
-  EXPECT_THAT(token,
-              Property(&Token::type, Eq(TokenType::NUMBER)));
-  EXPECT_THAT(token,
-              Property(&Token::text, Eq("100.2")));
+  EXPECT_EQ(token.type(), TokenType::NUMBER);
+  EXPECT_EQ(token.text(), "100.2");
 }
 
 TEST_F(ArithmeticLexerTest, canTokeniseAnOpeningBracket) {
   lexer.reset("(1+1)");
-  EXPECT_THAT(lexer.next(),
-              Property(&Token::type, Eq(TokenType::OPENING_BRACKET)));
+  auto token = lexer.next();
+  EXPECT_EQ(token.type(), TokenType::OPENING_BRACKET);
 }
 
 TEST_F(ArithmeticLexerTest, canTokeniseAClosingBracket) {
   lexer.reset(")");
-  EXPECT_THAT(lexer.next(),
-              Property(&Token::type, Eq(TokenType::CLOSING_BRACKET)));
+  auto token = lexer.next();
+  EXPECT_EQ(token.type(), TokenType::CLOSING_BRACKET);
 }
 
 TEST_F(ArithmeticLexerTest, returnsASentinelValueWhenThereIsNoMoreInputThatNeedsToBeTokenised) {
-  EXPECT_THAT(lexer.next(), Property(&Token::type, Eq(TokenType::STOP)));
+  auto token = lexer.next();
+  EXPECT_EQ(token.type(), TokenType::STOP);
 }
 
 TEST_F(ArithmeticLexerTest, throwsWhenACharacterIsNotRecognised) {
