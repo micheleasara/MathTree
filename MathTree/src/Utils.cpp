@@ -16,7 +16,7 @@ std::optional<double> parseDouble(std::string_view input) {
 
   auto [ptr, ec] = std::from_chars(input.data(), input.data() + input.size(), number,
                     std::chars_format::fixed);
-  if (ec != std::errc() || ptr != &(input.back())+1) {
+  if (ec != std::errc() || ptr != input.end()) {
     return std::nullopt;
   }
 

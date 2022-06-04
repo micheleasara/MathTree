@@ -74,6 +74,8 @@ void printError(size_t idx, MathTree::Validator::Errors error) {
             std::cerr << "Invalid second operator at index " << idx << ".\n"; break;
         case Validator::Errors::IncompleteOperation:
             std::cerr << "Operation with a missing operand at index " << idx << ".\n"; break;
+        case Validator::Errors::UnrecognisedSymbol:
+            std::cerr << "Unrecognised symbol at index " << idx << ".\n"; break;
         default:
             std::cerr << "Unknown error at index " << idx << ".\n"; break;
     }

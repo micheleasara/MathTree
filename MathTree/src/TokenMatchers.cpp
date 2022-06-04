@@ -29,10 +29,19 @@ std::optional<Token> UnsignedNumberMatcher::match(std::string_view source, size_
   }
 
   auto endIdx = startIdx;
+  bool decimalPlace = false;
   while(endIdx < source.size() && 
         (std::isdigit(source[endIdx]) || source[endIdx] == '.')) {
+    if (source[endIdx] == '.') {
+      if (decimalPlace) {
+        // allow at most one decimal place
+        break;
+      }
+      decimalPlace = true;
+    }
     ++endIdx;
   }
+
   auto numberStr = source.substr(startIdx, endIdx - startIdx);
   if (Utils::parseDouble(numberStr).has_value()) {
     return Token{TokenType::NUMBER, std::string(numberStr)};

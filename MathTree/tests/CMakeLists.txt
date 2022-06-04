@@ -25,6 +25,10 @@ add_executable(BinaryExpressionTest BinaryExpressionTest.cpp)
 target_link_libraries(BinaryExpressionTest ${TestingLibs})
 gtest_discover_tests(BinaryExpressionTest)
 
+add_executable(ValidationTest ValidationTest.cpp)
+target_link_libraries(ValidationTest ${TestingLibs})
+gtest_discover_tests(ValidationTest)
+
 add_executable(MatchersTest MatchersTest.cpp)
 target_link_libraries(MatchersTest ${TestingLibs})
 gtest_discover_tests(MatchersTest)

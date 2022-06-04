@@ -9,12 +9,14 @@
 #include <unordered_map>
 #include <string>
 #include <string_view>
+#include "TokenMatchers.hpp"
 #include "Utils.hpp"
 #include <vector>
 
 namespace MathTree {
-// temporary dirty hack
-std::unordered_map<char, int> operatorsPriority{{'+', 0}, {'-', 0}, {'*', 1}, {'/', 1}};
+auto constexpr operatorsList = {TokenType::PLUS, TokenType::MINUS,
+                                    TokenType::SLASH, TokenType::ASTERISK,
+                                    TokenType::CARET};
 
 BinaryExpression::BinaryExpression(std::unique_ptr<Expression> left,
                                    TokenType tokenType,
@@ -41,13 +43,29 @@ Validator::IndexErrorPairs Validator::validate(std::string_view input) {
     return IndexErrorPairs{};
   }
 
+  SymbolMatcher operatorMatcher(operatorsList);
+  UnsignedNumberMatcher numberMatcher;
   IndexErrorPairs idxErrorPairs;
   std::vector<size_t> openBracketsIdx;
   int lastNonSpaceIdx = -1;
+  auto wasNumber = false;
+  auto wasOperator = false;
   for (size_t i = 0; i < input.size(); ++i) {
+    if (std::isspace(input[i])) {
+      continue;
+    }
+
+    auto increment = 0;
+    std::optional<Token> operatorOpt, numberOpt;
+    if (operatorOpt = operatorMatcher.match(input, i)) {
+      increment += operatorOpt->text().size() - 1;
+    } else if (numberOpt = numberMatcher.match(input, i)) {
+      increment += numberOpt->text().size() - 1;
+    }
+
     if (input[i] == '(') {
       openBracketsIdx.push_back(i);
-      if (lastNonSpaceIdx > -1 && std::isdigit(input[lastNonSpaceIdx])) {
+      if (wasNumber) {
         idxErrorPairs.emplace_back(i, Errors::MissingOperator);
       }
     } else if (input[i] == ')') {
@@ -56,27 +74,29 @@ Validator::IndexErrorPairs Validator::validate(std::string_view input) {
       } else {
         idxErrorPairs.emplace_back(i, Errors::UnpairedClosingBracket);
       }
-      if (lastNonSpaceIdx > -1 && operatorsPriority.count(input[lastNonSpaceIdx])) {
+      if (wasOperator) {
         idxErrorPairs.emplace_back(lastNonSpaceIdx, Errors::IncompleteOperation);
       }
-    } else if (operatorsPriority.count(input[i]) &&
-                lastNonSpaceIdx > -1 && operatorsPriority.count(input[lastNonSpaceIdx])) {
+    } else if (operatorOpt && wasOperator) {
       idxErrorPairs.emplace_back(i, Errors::TwoOperatorsInARow);
-    } else if (std::isdigit(input[i]) && lastNonSpaceIdx > -1 && input[lastNonSpaceIdx] == ')') {
+    } else if (numberOpt && (wasNumber || (lastNonSpaceIdx > -1 && input[lastNonSpaceIdx] == ')'))) {
       idxErrorPairs.emplace_back(i, Errors::MissingOperator);
+    } else if (!operatorOpt && !numberOpt) {
+      idxErrorPairs.emplace_back(i, Errors::UnrecognisedSymbol);
     }
 
-    if (!std::isspace(input[i])) {
-      lastNonSpaceIdx = static_cast<int>(i);
-    }
+    lastNonSpaceIdx = static_cast<int>(i);
+    wasNumber = numberOpt.has_value();
+    wasOperator = operatorOpt.has_value();
+    i += increment;
   }
 
-  if (lastNonSpaceIdx > -1 && operatorsPriority.count(input[lastNonSpaceIdx])) {
+  if (wasOperator) {
     idxErrorPairs.emplace_back(lastNonSpaceIdx, Errors::IncompleteOperation);
   }
 
-  for (size_t i = 0; i < openBracketsIdx.size(); ++i) {
-    idxErrorPairs.emplace_back(openBracketsIdx[i], Errors::UnpairedOpeningBracket);
+  for (auto const& idx: openBracketsIdx) {
+    idxErrorPairs.emplace_back(idx, Errors::UnpairedOpeningBracket);
   }
 
   return idxErrorPairs;

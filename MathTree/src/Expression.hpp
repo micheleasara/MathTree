@@ -73,7 +73,8 @@ public:
     UnpairedClosingBracket,
     TwoOperatorsInARow,
     IncompleteOperation,
-    MissingOperator
+    MissingOperator,
+    UnrecognisedSymbol
   };
   using IndexErrorPairs = std::vector<std::pair<size_t, Errors>>;
 
