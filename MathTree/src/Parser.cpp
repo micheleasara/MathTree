@@ -56,4 +56,22 @@ Token const& PrattParser::currentToken() {
   return *m_currentToken;
 }
 
+ArithmeticParser::ArithmeticParser(std::string input): 
+                       m_parser(PrattParser(std::make_unique<ArithmeticLexer>(std::move(input)))) {
+  m_parser.setPrefixParselet(TokenType::PLUS, std::make_unique<PositiveSignParselet>(2));
+  m_parser.setPrefixParselet(TokenType::MINUS, std::make_unique<NegativeSignParselet>(2));
+  m_parser.setPrefixParselet(TokenType::NUMBER, std::make_unique<NumberParselet>());
+  m_parser.setPrefixParselet(TokenType::OPENING_BRACKET, std::make_unique<GroupParselet>());
+
+  m_parser.setInfixParselet(TokenType::PLUS, std::make_unique<AdditionParselet>(1));
+  m_parser.setInfixParselet(TokenType::MINUS, std::make_unique<SubtractionParselet>(1));
+  m_parser.setInfixParselet(TokenType::ASTERISK, std::make_unique<MultiplicationParselet>(2));
+  m_parser.setInfixParselet(TokenType::SLASH, std::make_unique<DivisionParselet>(2));
+  m_parser.setInfixParselet(TokenType::CARET, std::make_unique<ExponentiationParselet>(3));
+}
+
+std::unique_ptr<Expression> ArithmeticParser::parse() {
+  return m_parser.parse();
+}
+
 }
