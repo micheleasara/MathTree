@@ -12,9 +12,9 @@
 
 namespace MathTree {
 
-class Parser {
+class PrattParser {
 public:
-  Parser(std::unique_ptr<Lexer> lexer);
+  PrattParser(std::unique_ptr<Lexer> lexer);
 
   std::unique_ptr<Expression> parse();
   std::unique_ptr<Expression> parse(int priority);

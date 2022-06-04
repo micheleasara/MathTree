@@ -32,7 +32,7 @@ int main() {
             continue;
         }
 
-        Parser parser(std::make_unique<ArithmeticLexer>(input));
+        PrattParser parser(std::make_unique<ArithmeticLexer>(input));
 
         parser.setPrefixParselet(TokenType::PLUS, std::make_unique<PositiveSignParselet>(2));
         parser.setPrefixParselet(TokenType::MINUS, std::make_unique<NegativeSignParselet>(2));

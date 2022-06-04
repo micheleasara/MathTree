@@ -3,13 +3,13 @@
 
 namespace MathTree {
 
-Parser::Parser(std::unique_ptr<Lexer> lexer): m_lexer(std::move(lexer)) {}
+PrattParser::PrattParser(std::unique_ptr<Lexer> lexer): m_lexer(std::move(lexer)) {}
 
-std::unique_ptr<Expression> Parser::parse() {
+std::unique_ptr<Expression> PrattParser::parse() {
   return parse(0);
 }
 
-std::unique_ptr<Expression> Parser::parse(int priority) {
+std::unique_ptr<Expression> PrattParser::parse(int priority) {
   auto token = consumeCurrentToken();
   if (m_prefixParselets.count(token.type()) <= 0) {
     throw std::logic_error("Expected a prefix parselet while parsing.");
@@ -26,21 +26,21 @@ std::unique_ptr<Expression> Parser::parse(int priority) {
   return left;
 }
 
-void Parser::setPrefixParselet(TokenType token, std::unique_ptr<PrefixParselet> parselet) {
+void PrattParser::setPrefixParselet(TokenType token, std::unique_ptr<PrefixParselet> parselet) {
   m_prefixParselets[token] = std::move(parselet);
 }
 
-void Parser::setInfixParselet(TokenType token, std::unique_ptr<InfixParselet> parselet) {
+void PrattParser::setInfixParselet(TokenType token, std::unique_ptr<InfixParselet> parselet) {
   m_infixParselets[token] = std::move(parselet);
 }
 
-Token Parser::consumeCurrentToken() {
+Token PrattParser::consumeCurrentToken() {
   auto token = currentToken();
   m_currentToken = std::nullopt;
   return token;
 }
 
-int Parser::currentTokenPriority() {
+int PrattParser::currentTokenPriority() {
   auto token = currentToken();
   if (m_infixParselets.count(token.type()) <= 0) {
     return 0;
@@ -49,7 +49,7 @@ int Parser::currentTokenPriority() {
   return infix.priority();
 }
 
-Token const& Parser::currentToken() {
+Token const& PrattParser::currentToken() {
   if (!m_currentToken.has_value()) {
     m_currentToken = m_lexer->next();
   }
