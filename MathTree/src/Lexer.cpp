@@ -38,6 +38,10 @@ Token ArithmeticLexer::next() {
 
 void ArithmeticLexer::reset(std::string newText) {
   m_text = std::move(newText);
+  reset();
+}
+
+void ArithmeticLexer::reset() {
   m_currentIndex = 0;
 }  
 

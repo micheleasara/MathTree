@@ -3,6 +3,21 @@
 
 namespace MathTree {
 
+class ReferenceCountingResetter {
+public:
+  ReferenceCountingResetter(int& counter, PrattParser& parser): 
+                         m_counter(++counter), m_parser(parser) {}
+  ~ReferenceCountingResetter() { 
+    if (--m_counter <= 0) {
+      m_parser.reset();
+    }
+  }
+
+private:
+  int& m_counter;
+  PrattParser& m_parser;
+};
+
 PrattParser::PrattParser(std::unique_ptr<Lexer> lexer): m_lexer(std::move(lexer)) {}
 
 std::unique_ptr<Expression> PrattParser::parse() {
@@ -10,6 +25,7 @@ std::unique_ptr<Expression> PrattParser::parse() {
 }
 
 std::unique_ptr<Expression> PrattParser::parse(int priority) {
+  ReferenceCountingResetter countingResetter(parseCallCount, *this);
   auto token = consumeCurrentToken();
   if (m_prefixParselets.count(token.type()) <= 0) {
     throw std::logic_error("Expected a prefix parselet while parsing.");
@@ -54,6 +70,11 @@ Token const& PrattParser::currentToken() {
     m_currentToken = m_lexer->next();
   }
   return *m_currentToken;
+}
+
+void PrattParser::reset() {
+  m_currentToken = std::nullopt;
+  m_lexer->reset();
 }
 
 ArithmeticParser::ArithmeticParser(std::string input): 

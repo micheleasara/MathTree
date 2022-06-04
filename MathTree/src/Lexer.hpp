@@ -13,6 +13,7 @@ namespace MathTree {
 class Lexer {
 public:
   virtual Token next() = 0;
+  virtual void reset() = 0;
   
   Lexer const& operator=(Lexer const&) = delete;
   Lexer&& operator=(Lexer&&) = delete;
@@ -25,6 +26,7 @@ public:
   ArithmeticLexer(std::string text);
   Token next() override;
   void reset(std::string newText);
+  void reset();
 
 private:
   std::string m_text;
