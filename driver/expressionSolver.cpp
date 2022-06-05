@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-void printError(size_t idx, MathTree::Validator::Errors error);
+void printError(size_t idx, MathTree::ArithmeticParser::Errors error);
 
 int main() {
     using namespace MathTree;
@@ -19,7 +19,7 @@ int main() {
         std::cout << "Enter an expression:\n";
         std::getline(std::cin, input);
 
-        auto idxErrorPairs = Validator::validate(input);
+        auto idxErrorPairs = ArithmeticParser::validate(input);
         std::sort(idxErrorPairs.begin(), idxErrorPairs.end(), [](auto const& leftPair, 
                                                                  auto const& rightPair) {
             return leftPair.first < rightPair.first;
@@ -49,20 +49,20 @@ int main() {
     return 0;
 }
 
-void printError(size_t idx, MathTree::Validator::Errors error) {
-    using MathTree::Validator;
+void printError(size_t idx, MathTree::ArithmeticParser::Errors error) {
+    using MathTree::ArithmeticParser;
     switch (error) {
-        case Validator::Errors::UnpairedClosingBracket:
+        case ArithmeticParser::Errors::UnpairedClosingBracket:
             std::cerr << "Unpaired ')' at index " << idx << ".\n"; break;
-        case Validator::Errors::UnpairedOpeningBracket:
+        case ArithmeticParser::Errors::UnpairedOpeningBracket:
             std::cerr << "Unpaired '(' at index " << idx << ".\n"; break;
-        case Validator::Errors::MissingOperator:
+        case ArithmeticParser::Errors::MissingOperator:
             std::cerr << "Missing operator at index " << idx << ".\n"; break;
-        case Validator::Errors::TwoOperatorsInARow:
+        case ArithmeticParser::Errors::TwoOperatorsInARow:
             std::cerr << "Invalid second operator at index " << idx << ".\n"; break;
-        case Validator::Errors::IncompleteOperation:
+        case ArithmeticParser::Errors::IncompleteOperation:
             std::cerr << "Operation with a missing operand at index " << idx << ".\n"; break;
-        case Validator::Errors::UnrecognisedSymbol:
+        case ArithmeticParser::Errors::UnrecognisedSymbol:
             std::cerr << "Unrecognised symbol at index " << idx << ".\n"; break;
         default:
             std::cerr << "Unknown error at index " << idx << ".\n"; break;

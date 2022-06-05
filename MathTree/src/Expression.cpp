@@ -14,10 +14,6 @@
 #include <vector>
 
 namespace MathTree {
-auto constexpr operatorsList = {TokenType::PLUS, TokenType::MINUS,
-                                    TokenType::SLASH, TokenType::ASTERISK,
-                                    TokenType::CARET};
-
 BinaryExpression::BinaryExpression(std::unique_ptr<Expression> left,
                                    TokenType tokenType,
                                    std::unique_ptr<Expression> right):
@@ -36,70 +32,6 @@ Expression const& BinaryExpression::left() const {
 }
 Expression const& BinaryExpression::right() const {
   return *m_right;
-}
-
-Validator::IndexErrorPairs Validator::validate(std::string_view input) {
-  if (input.size() <= 0) {
-    return IndexErrorPairs{};
-  }
-
-  SymbolMatcher operatorMatcher(operatorsList);
-  UnsignedNumberMatcher numberMatcher;
-  IndexErrorPairs idxErrorPairs;
-  std::vector<size_t> openBracketsIdx;
-  int lastNonSpaceIdx = -1;
-  auto wasNumber = false;
-  auto wasOperator = false;
-  for (size_t i = 0; i < input.size(); ++i) {
-    if (std::isspace(input[i])) {
-      continue;
-    }
-
-    auto increment = 0;
-    std::optional<Token> operatorOpt, numberOpt;
-    if (operatorOpt = operatorMatcher.match(input, i)) {
-      increment += operatorOpt->text().size() - 1;
-    } else if (numberOpt = numberMatcher.match(input, i)) {
-      increment += numberOpt->text().size() - 1;
-    }
-
-    if (input[i] == '(') {
-      openBracketsIdx.push_back(i);
-      if (wasNumber) {
-        idxErrorPairs.emplace_back(i, Errors::MissingOperator);
-      }
-    } else if (input[i] == ')') {
-      if (openBracketsIdx.size() > 0) {
-        openBracketsIdx.pop_back();
-      } else {
-        idxErrorPairs.emplace_back(i, Errors::UnpairedClosingBracket);
-      }
-      if (wasOperator) {
-        idxErrorPairs.emplace_back(lastNonSpaceIdx, Errors::IncompleteOperation);
-      }
-    } else if (operatorOpt && wasOperator) {
-      idxErrorPairs.emplace_back(i, Errors::TwoOperatorsInARow);
-    } else if (numberOpt && (wasNumber || (lastNonSpaceIdx > -1 && input[lastNonSpaceIdx] == ')'))) {
-      idxErrorPairs.emplace_back(i, Errors::MissingOperator);
-    } else if (!operatorOpt && !numberOpt) {
-      idxErrorPairs.emplace_back(i, Errors::UnrecognisedSymbol);
-    }
-
-    lastNonSpaceIdx = static_cast<int>(i);
-    wasNumber = numberOpt.has_value();
-    wasOperator = operatorOpt.has_value();
-    i += increment;
-  }
-
-  if (wasOperator) {
-    idxErrorPairs.emplace_back(lastNonSpaceIdx, Errors::IncompleteOperation);
-  }
-
-  for (auto const& idx: openBracketsIdx) {
-    idxErrorPairs.emplace_back(idx, Errors::UnpairedOpeningBracket);
-  }
-
-  return idxErrorPairs;
 }
 
 NegativeSignExpression::NegativeSignExpression(TokenType operatorToken, std::unique_ptr<Expression> right) {

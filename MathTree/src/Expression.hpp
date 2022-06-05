@@ -66,24 +66,6 @@ public:
   double evaluate() const override;
 };
 
-class Validator final {
-public:
-  enum class Errors {
-    UnpairedOpeningBracket,
-    UnpairedClosingBracket,
-    TwoOperatorsInARow,
-    IncompleteOperation,
-    MissingOperator,
-    UnrecognisedSymbol
-  };
-  using IndexErrorPairs = std::vector<std::pair<size_t, Errors>>;
-
-  static IndexErrorPairs validate(std::string_view input);
-
-private:
-  Validator() {}
-};
-
 class NegativeSignExpression: public Expression {
 public:
   NegativeSignExpression(TokenType operatorToken, std::unique_ptr<Expression> right);

@@ -46,6 +46,17 @@ private:
 
 class ArithmeticParser: public Parser {
 public:
+  enum class Errors {
+    UnpairedOpeningBracket,
+    UnpairedClosingBracket,
+    TwoOperatorsInARow,
+    IncompleteOperation,
+    MissingOperator,
+    UnrecognisedSymbol
+  };
+  using IndexErrorPairs = std::vector<std::pair<size_t, Errors>>;
+  static IndexErrorPairs validate(std::string_view input);
+  
   ArithmeticParser(std::string input);
   std::unique_ptr<Expression> parse() override;
 
