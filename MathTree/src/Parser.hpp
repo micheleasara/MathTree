@@ -49,7 +49,6 @@ public:
   enum class Errors {
     UnpairedOpeningBracket,
     UnpairedClosingBracket,
-    TwoOperatorsInARow,
     IncompleteOperation,
     MissingOperator,
     UnrecognisedSymbol

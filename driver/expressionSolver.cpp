@@ -58,8 +58,6 @@ void printError(size_t idx, MathTree::ArithmeticParser::Errors error) {
             std::cerr << "Unpaired '(' at index " << idx << ".\n"; break;
         case ArithmeticParser::Errors::MissingOperator:
             std::cerr << "Missing operator at index " << idx << ".\n"; break;
-        case ArithmeticParser::Errors::TwoOperatorsInARow:
-            std::cerr << "Invalid second operator at index " << idx << ".\n"; break;
         case ArithmeticParser::Errors::IncompleteOperation:
             std::cerr << "Operation with a missing operand at index " << idx << ".\n"; break;
         case ArithmeticParser::Errors::UnrecognisedSymbol:

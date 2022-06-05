@@ -81,7 +81,9 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view in
   static auto constexpr operatorsList = {TokenType::PLUS, TokenType::MINUS,
                                           TokenType::SLASH, TokenType::ASTERISK,
                                           TokenType::CARET};
+  static auto constexpr signsList = {TokenType::PLUS, TokenType::MINUS};
   static SymbolMatcher operatorMatcher(operatorsList);
+  static SymbolMatcher signMatcher(signsList);
   static UnsignedNumberMatcher numberMatcher;
   
   if (input.size() <= 0) {
@@ -120,8 +122,8 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view in
       if (wasOperator) {
         idxErrorPairs.emplace_back(lastNonSpaceIdx, Errors::IncompleteOperation);
       }
-    } else if (operatorOpt && wasOperator) {
-      idxErrorPairs.emplace_back(i, Errors::TwoOperatorsInARow);
+    } else if (operatorOpt && wasOperator && !signMatcher.match(operatorOpt->text(), 0)) {
+      idxErrorPairs.emplace_back(i, Errors::IncompleteOperation);
     } else if (numberOpt && (wasNumber || (lastNonSpaceIdx > -1 && input[lastNonSpaceIdx] == ')'))) {
       idxErrorPairs.emplace_back(i, Errors::MissingOperator);
     } else if (!operatorOpt && !numberOpt) {

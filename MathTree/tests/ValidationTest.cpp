@@ -5,6 +5,7 @@
 using MathTree::ArithmeticParser;
 using ::testing::ElementsAre;
 using ::testing::Pair;
+using ::testing::IsEmpty;
 
 TEST(ValidationTest, CanValidateCorrectInputs) {
   auto errors = ArithmeticParser::validate("1+(3-2)^2^0*4/2");
@@ -29,9 +30,9 @@ TEST(ValidationTest, UnpairedClosingBracketsAreReportedAsErrorWithTheCorrespondi
   EXPECT_THAT(errors, ElementsAre(Pair(6, closingError)));
 }
 
-TEST(ValidationTest, TwoOperatorsInARowAreReportedAsErrorWithTheCorrespondingIndex) {
-  auto errors = ArithmeticParser::validate("2++3--5**3//4^^5");
-  auto operatorsError = ArithmeticParser::Errors::TwoOperatorsInARow;
+TEST(ValidationTest, TwoOperatorsInARowExcludingSignsAreReportedAsErrorWithTheCorrespondingIndex) {
+  auto operatorsError = ArithmeticParser::Errors::IncompleteOperation;
+  auto errors = ArithmeticParser::validate("1**1*/1*^1+*1-*1");
   EXPECT_THAT(errors, ElementsAre(Pair(2, operatorsError),
                                   Pair(5, operatorsError),
                                   Pair(8, operatorsError),
@@ -39,11 +40,16 @@ TEST(ValidationTest, TwoOperatorsInARowAreReportedAsErrorWithTheCorrespondingInd
                                   Pair(14, operatorsError)));
 }
 
-TEST(ValidationTest, TwoOperatorsInARowAreReportedAsErrorWithTheCorrespondingIndexAndIgnoringSpaces) {
-  auto errors = ArithmeticParser::validate("2+ +3- -5");
-  auto operatorsError = ArithmeticParser::Errors::TwoOperatorsInARow;
+TEST(ValidationTest, TwoOperatorsInARowExcludingSignsAreReportedAsErrorWithTheCorrespondingIndexAndIgnoringSpaces) {
+  auto errors = ArithmeticParser::validate("2* *3/ *5");
+  auto operatorsError = ArithmeticParser::Errors::IncompleteOperation;
   EXPECT_THAT(errors, ElementsAre(Pair(3, operatorsError),
                   Pair(7, operatorsError)));
+}
+
+TEST(ValidationTest, DoesNotReportAnOperatorFollowedByAnyNumberOfSignsAsAnError) {
+  auto errors = ArithmeticParser::validate("1++ 2+-3-+4--5* -6 ++++ 4");
+  EXPECT_THAT(errors, IsEmpty());
 }
 
 TEST(ValidationTest, AnOperatorAtTheEndIsReportedAsIncompleteWithTheCorrespondingIndex) {
@@ -113,6 +119,7 @@ TEST(ValidationTest, RepeatedDecimalPointsAreReportedAsMissingOperatorWithTheCor
   auto operatorsError = ArithmeticParser::Errors::MissingOperator;
   EXPECT_THAT(errors, ElementsAre(Pair(2, operatorsError)));
 }
+
 TEST(ValidationTest, AnUnrecognisedSymbolIsReportedAsAnErrorWithTheCorrespondingIndex) {
   auto errors = ArithmeticParser::validate("2+a*3");
   auto operatorsError = ArithmeticParser::Errors::UnrecognisedSymbol;
