@@ -5,6 +5,7 @@
 #include <string_view>
 #include "Token.hpp"
 #include <unordered_map>
+#include <vector>
 
 namespace MathTree {
 
@@ -27,7 +28,7 @@ public:
   std::optional<Token> match(std::string_view source, size_t startIdx) override;
 
 private:
-  std::unordered_map<char, TokenType> m_symbolToOperator;
+  std::vector<TokenType> m_tokenTypes;
 };
 
 class UnsignedNumberMatcher: public TokenMatcher {

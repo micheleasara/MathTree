@@ -6,7 +6,7 @@ namespace MathTree {
 template<typename InputIterator>
 SymbolMatcher::SymbolMatcher(InputIterator tokenTypesBegin, InputIterator tokenTypesEnd) {
   for (auto it = tokenTypesBegin; it != tokenTypesEnd; ++it) {
-    m_symbolToOperator.emplace(symbolise(*it), *it);
+    m_tokenTypes.push_back(*it);
   }
 }
 
@@ -14,13 +14,13 @@ SymbolMatcher::SymbolMatcher(std::initializer_list<TokenType> initList):
                                                         SymbolMatcher(initList.begin(), initList.end()) {}
 
 std::optional<Token> SymbolMatcher::match(std::string_view source, size_t startIdx) {
-  if (startIdx < source.size()) {
-    auto chr = source[startIdx];
-    if (m_symbolToOperator.count(chr) > 0) {
-      return Token{m_symbolToOperator[chr], std::string(1, chr)};
+  for (auto const& tokenType: m_tokenTypes) {
+    auto symbol = symbolise(tokenType);
+    if (source.substr(startIdx, symbol.size()) == symbol) {
+      return Token{tokenType, std::move(symbol)};
     }
   }
-  return std::nullopt;
+  return std::nullopt;   
 }
 
 std::optional<Token> UnsignedNumberMatcher::match(std::string_view source, size_t startIdx) {

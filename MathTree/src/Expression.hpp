@@ -87,6 +87,18 @@ private:
   double m_value{0};
 };
 
+class SquareRootExpression: public Expression {
+public:
+  SquareRootExpression(std::unique_ptr<Expression> innerExpression,
+                       TokenType tokenType);
+  double evaluate() const override;
+  void print(std::ostream& stream) const override;
+
+private:
+  std::unique_ptr<Expression> m_innerExpression;
+  TokenType m_tokenType;
+};
+
 }
 
 #endif // MATHTREE_EXPRESSION_H

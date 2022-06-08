@@ -14,10 +14,11 @@ enum class TokenType {
   SLASH,
   CARET,
   NUMBER,
+  SQUARE_ROOT,
   STOP
 };
   
-char symbolise(TokenType type);
+std::string symbolise(TokenType type);
 
 class Token {
 public:

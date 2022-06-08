@@ -3,24 +3,26 @@
 
 namespace MathTree {
 
-char symbolise(TokenType type) {
+std::string symbolise(TokenType type) {
   switch (type) {
   case TokenType::OPENING_BRACKET:
-    return '(';
+    return "(";
   case TokenType::CLOSING_BRACKET:
-    return ')';
+    return ")";
   case TokenType::PLUS:
-    return '+';
+    return "+";
   case TokenType::MINUS:
-    return '-';
+    return "-";
   case TokenType::ASTERISK:
-    return '*';
+    return "*";
   case TokenType::SLASH:
-    return '/';
+    return "/";
   case TokenType::CARET:
-    return '^';
+    return "^";
+  case TokenType::SQUARE_ROOT:
+    return "sqrt";
   default:
-    throw std::logic_error("Token without associated symbol.");
+    throw std::logic_error("Token without an associated symbol.");
   }
 }
 

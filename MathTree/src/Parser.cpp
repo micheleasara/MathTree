@@ -80,10 +80,10 @@ void PrattParser::reset() {
 ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view input) {
   static auto constexpr operatorsList = {TokenType::PLUS, TokenType::MINUS,
                                           TokenType::SLASH, TokenType::ASTERISK,
-                                          TokenType::CARET};
-  static auto constexpr signsList = {TokenType::PLUS, TokenType::MINUS};
+                                          TokenType::CARET, TokenType::SQUARE_ROOT};
+  static auto constexpr signsList = {TokenType::PLUS, TokenType::MINUS, TokenType::SQUARE_ROOT};
   static SymbolMatcher operatorMatcher(operatorsList);
-  static SymbolMatcher signMatcher(signsList);
+  static SymbolMatcher signOrSqrtMatcher(signsList);
   static UnsignedNumberMatcher numberMatcher;
   
   if (input.size() <= 0) {
@@ -122,7 +122,9 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view in
       if (wasOperator) {
         idxErrorPairs.emplace_back(lastNonSpaceIdx, Errors::IncompleteOperation);
       }
-    } else if (operatorOpt && wasOperator && !signMatcher.match(operatorOpt->text(), 0)) {
+    } else if (operatorOpt && wasOperator && !signOrSqrtMatcher.match(operatorOpt->text(), 0)) {
+      // allow expressions like 1+-2, 2++3, sqrtsqrt3, 2-sqrt2 and so on
+      // but disallow other operators from appearing in a row without numbers between them
       idxErrorPairs.emplace_back(i, Errors::IncompleteOperation);
     } else if (numberOpt && (wasNumber || (lastNonSpaceIdx > -1 && input[lastNonSpaceIdx] == ')'))) {
       idxErrorPairs.emplace_back(i, Errors::MissingOperator);
@@ -153,6 +155,7 @@ ArithmeticParser::ArithmeticParser(std::string input):
   m_parser.setPrefixParselet(TokenType::MINUS, std::make_unique<NegativeSignParselet>(2));
   m_parser.setPrefixParselet(TokenType::NUMBER, std::make_unique<NumberParselet>());
   m_parser.setPrefixParselet(TokenType::OPENING_BRACKET, std::make_unique<GroupParselet>());
+  m_parser.setPrefixParselet(TokenType::SQUARE_ROOT, std::make_unique<SquareRootParselet>(3));
 
   m_parser.setInfixParselet(TokenType::PLUS, std::make_unique<AdditionParselet>(1));
   m_parser.setInfixParselet(TokenType::MINUS, std::make_unique<SubtractionParselet>(1));

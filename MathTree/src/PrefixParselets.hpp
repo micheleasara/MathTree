@@ -27,6 +27,14 @@ public:
     std::unique_ptr<Expression> parse(PrattParser& parser, Token const&) override;
 };
 
+class SquareRootParselet: public PrefixParselet {
+public:
+    SquareRootParselet(int priority);
+    std::unique_ptr<Expression> parse(PrattParser& parser, Token const& token) override;
+private:
+    int m_priority{0}; 
+};
+
 class NegativeSignParselet: public PrefixParselet {
 public:
     NegativeSignParselet(int priority);

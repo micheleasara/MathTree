@@ -89,4 +89,23 @@ double ExponentiationExpression::evaluate() const {
   return std::pow(left().evaluate(), right().evaluate());
 }
 
+SquareRootExpression::SquareRootExpression(std::unique_ptr<Expression> innerExpression, 
+                                          TokenType tokenType):
+                                            m_innerExpression(std::move(innerExpression)),
+                                            m_tokenType(tokenType) {}
+
+double SquareRootExpression::evaluate() const {
+  auto innerResult = m_innerExpression->evaluate();
+  if (innerResult < 0 || std::isinf(innerResult) || std::isnan(innerResult)) {
+    throw std::domain_error("Cannot compute the square root of " + std::to_string(innerResult) + ".");
+  }
+  return std::sqrt(innerResult);
+}
+
+void SquareRootExpression::print(std::ostream& stream) const {
+  stream << symbolise(m_tokenType) << "(";
+  m_innerExpression->print(stream);
+  stream << ")";
+}
+
 }

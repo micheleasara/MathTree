@@ -7,7 +7,7 @@ namespace MathTree {
 
 auto constexpr symbolsList = {TokenType::PLUS, TokenType::MINUS,
                                     TokenType::SLASH, TokenType::ASTERISK,
-                                    TokenType::CARET,
+                                    TokenType::CARET, TokenType::SQUARE_ROOT,
                                     TokenType::OPENING_BRACKET, TokenType::CLOSING_BRACKET};
 
 ArithmeticLexer::ArithmeticLexer(): ArithmeticLexer("") {}
