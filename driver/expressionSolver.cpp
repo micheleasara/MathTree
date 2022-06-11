@@ -62,6 +62,8 @@ void printError(size_t idx, MathTree::ArithmeticParser::Errors error) {
             std::cerr << "Operation with a missing operand at index " << idx << ".\n"; break;
         case ArithmeticParser::Errors::UnrecognisedSymbol:
             std::cerr << "Unrecognised symbol at index " << idx << ".\n"; break;
+        case ArithmeticParser::Errors::NothingBetweenBrackets:
+            std::cerr << "Nothing between brackets starting at index " << idx << ".\n"; break;
         default:
             std::cerr << "Unknown error at index " << idx << ".\n"; break;
     }

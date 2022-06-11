@@ -116,7 +116,11 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view in
       }
     } else if (input[i] == ')') {
       if (openBracketsIdx.size() > 0) {
+        auto openingIdx = openBracketsIdx.back();
         openBracketsIdx.pop_back();
+        if (static_cast<size_t>(lastNonSpaceIdx) <= openingIdx) {
+          idxErrorPairs.emplace_back(openingIdx, Errors::NothingBetweenBrackets);
+        }
       } else {
         idxErrorPairs.emplace_back(i, Errors::UnpairedClosingBracket);
       }

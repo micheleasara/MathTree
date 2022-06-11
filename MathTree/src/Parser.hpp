@@ -51,7 +51,8 @@ public:
     UnpairedClosingBracket,
     IncompleteOperation,
     MissingOperator,
-    UnrecognisedSymbol
+    UnrecognisedSymbol,
+    NothingBetweenBrackets
   };
   using IndexErrorPairs = std::vector<std::pair<size_t, Errors>>;
   static IndexErrorPairs validate(std::string_view input);
