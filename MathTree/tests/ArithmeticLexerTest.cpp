@@ -50,6 +50,12 @@ TEST_F(ArithmeticLexerTest, canTokeniseAClosingBracket) {
   EXPECT_EQ(token.type(), TokenType::CLOSING_BRACKET);
 }
 
+TEST_F(ArithmeticLexerTest, ignoresWhiteSpaces) {
+  lexer.reset("    \n");
+  auto token = lexer.next();
+  EXPECT_EQ(token.type(), TokenType::STOP);
+}
+
 TEST_F(ArithmeticLexerTest, returnsASentinelValueWhenThereIsNoMoreInputThatNeedsToBeTokenised) {
   auto token = lexer.next();
   EXPECT_EQ(token.type(), TokenType::STOP);
