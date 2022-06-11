@@ -31,20 +31,20 @@ TEST(ValidationTest, UnpairedClosingBracketsAreReportedAsErrorWithTheCorrespondi
 }
 
 TEST(ValidationTest, TwoOperatorsInARowExcludingSignsAreReportedAsErrorWithTheCorrespondingIndex) {
-  auto operatorsError = ArithmeticParser::Errors::IncompleteOperation;
+  auto operationError = ArithmeticParser::Errors::IncompleteOperation;
   auto errors = ArithmeticParser::validate("1**1*/1*^1+*1-*1");
-  EXPECT_THAT(errors, ElementsAre(Pair(2, operatorsError),
-                                  Pair(5, operatorsError),
-                                  Pair(8, operatorsError),
-                                  Pair(11, operatorsError),
-                                  Pair(14, operatorsError)));
+  EXPECT_THAT(errors, ElementsAre(Pair(2, operationError),
+                                  Pair(5, operationError),
+                                  Pair(8, operationError),
+                                  Pair(11, operationError),
+                                  Pair(14, operationError)));
 }
 
 TEST(ValidationTest, TwoOperatorsInARowExcludingSignsAreReportedAsErrorWithTheCorrespondingIndexAndIgnoringSpaces) {
   auto errors = ArithmeticParser::validate("2* *3/ *5");
-  auto operatorsError = ArithmeticParser::Errors::IncompleteOperation;
-  EXPECT_THAT(errors, ElementsAre(Pair(3, operatorsError),
-                  Pair(7, operatorsError)));
+  auto operationError = ArithmeticParser::Errors::IncompleteOperation;
+  EXPECT_THAT(errors, ElementsAre(Pair(3, operationError),
+                  Pair(7, operationError)));
 }
 
 TEST(ValidationTest, DoesNotReportAnOperatorFollowedByAnyNumberOfSignsAsAnError) {
@@ -54,28 +54,28 @@ TEST(ValidationTest, DoesNotReportAnOperatorFollowedByAnyNumberOfSignsAsAnError)
 
 TEST(ValidationTest, AnOperatorAtTheEndIsReportedAsIncompleteWithTheCorrespondingIndex) {
   auto errors = ArithmeticParser::validate("2+3-");
-  auto operatorsError = ArithmeticParser::Errors::IncompleteOperation;
-  EXPECT_THAT(errors, ElementsAre(Pair(3, operatorsError)));
+  auto operationError = ArithmeticParser::Errors::IncompleteOperation;
+  EXPECT_THAT(errors, ElementsAre(Pair(3, operationError)));
 }
 
 TEST(ValidationTest, AnOperatorAtTheEndIsReportedAsIncompleteWithTheCorrespondingIndexAndIgnoringSpaces) {
   auto errors = ArithmeticParser::validate("2+3 - ");
-  auto operatorsError = ArithmeticParser::Errors::IncompleteOperation;
-  EXPECT_THAT(errors, ElementsAre(Pair(4, operatorsError)));
+  auto operationError = ArithmeticParser::Errors::IncompleteOperation;
+  EXPECT_THAT(errors, ElementsAre(Pair(4, operationError)));
 }
 
 TEST(ValidationTest, AnOperatorBeforeAClosingBracketIsReportedAsIncompleteWithTheCorrespondingIndex) {
   auto errors = ArithmeticParser::validate("2+(3-)+(9+)+5");
-  auto operatorsError = ArithmeticParser::Errors::IncompleteOperation;
-  EXPECT_THAT(errors, ElementsAre(Pair(4, operatorsError),
-                  Pair(9, operatorsError)));
+  auto operationError = ArithmeticParser::Errors::IncompleteOperation;
+  EXPECT_THAT(errors, ElementsAre(Pair(4, operationError),
+                  Pair(9, operationError)));
 }
 
 TEST(ValidationTest, AnOperatorBeforeAClosingBracketIsReportedAsIncompleteWithTheCorrespondingIndexAndIgnoringSpaces) {
   auto errors = ArithmeticParser::validate("2+(3- )+(9+ )+5");
-  auto operatorsError = ArithmeticParser::Errors::IncompleteOperation;
-  EXPECT_THAT(errors, ElementsAre(Pair(4, operatorsError),
-                                  Pair(10, operatorsError)));
+  auto operationError = ArithmeticParser::Errors::IncompleteOperation;
+  EXPECT_THAT(errors, ElementsAre(Pair(4, operationError),
+                                  Pair(10, operationError)));
 }
 
 TEST(ValidationTest, ANumberBeforeAnOpeningBracketIsReportedAsMissingOperatorWithTheCorrespondingIndex) {
@@ -122,6 +122,7 @@ TEST(ValidationTest, RepeatedDecimalPointsAreReportedAsMissingOperatorWithTheCor
 
 TEST(ValidationTest, AnUnrecognisedSymbolIsReportedAsAnErrorWithTheCorrespondingIndex) {
   auto errors = ArithmeticParser::validate("2+a*3");
-  auto operatorsError = ArithmeticParser::Errors::UnrecognisedSymbol;
-  EXPECT_THAT(errors, ElementsAre(Pair(2, operatorsError)));
+  auto symbolError = ArithmeticParser::Errors::UnrecognisedSymbol;
+  EXPECT_THAT(errors, ElementsAre(Pair(2, symbolError)));
+}
 }
