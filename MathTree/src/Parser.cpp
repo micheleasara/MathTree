@@ -81,9 +81,10 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view in
   static auto constexpr operatorsList = {TokenType::PLUS, TokenType::MINUS,
                                           TokenType::SLASH, TokenType::ASTERISK,
                                           TokenType::CARET, TokenType::SQUARE_ROOT};
-  static auto constexpr signsList = {TokenType::PLUS, TokenType::MINUS, TokenType::SQUARE_ROOT};
+  static auto constexpr signsList = {TokenType::PLUS, TokenType::MINUS};
   static SymbolMatcher operatorMatcher(operatorsList);
-  static SymbolMatcher signOrSqrtMatcher(signsList);
+  static SymbolMatcher signMatcher(signsList);
+  static SymbolMatcher sqrtMatcher({TokenType::SQUARE_ROOT});
   static UnsignedNumberMatcher numberMatcher;
   
   if (input.size() <= 0) {
@@ -122,10 +123,16 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view in
       if (wasOperator) {
         idxErrorPairs.emplace_back(lastNonSpaceIdx, Errors::IncompleteOperation);
       }
-    } else if (operatorOpt && wasOperator && !signOrSqrtMatcher.match(operatorOpt->text(), 0)) {
-      // allow expressions like 1+-2, 2++3, sqrtsqrt3, 2-sqrt2 and so on
-      // but disallow other operators from appearing in a row without numbers between them
-      idxErrorPairs.emplace_back(i, Errors::IncompleteOperation);
+    } else if (operatorOpt) {
+      auto isSqrt = sqrtMatcher.match(operatorOpt->text(), 0);
+      if (isSqrt && !wasOperator && lastNonSpaceIdx != -1) {
+        // sqrt must be preceded by an operator or it must be at the start of the expression
+        idxErrorPairs.emplace_back(i, Errors::MissingOperator);
+      } else if (wasOperator && !isSqrt && !signMatcher.match(operatorOpt->text(), 0)) {
+        // allow expressions like 1+-2, 2++3, sqrtsqrt3, 2-sqrt2 and so on
+        // but disallow other operators from appearing in a row without numbers between them
+        idxErrorPairs.emplace_back(i, Errors::IncompleteOperation);
+      }
     } else if (numberOpt && (wasNumber || (lastNonSpaceIdx > -1 && input[lastNonSpaceIdx] == ')'))) {
       idxErrorPairs.emplace_back(i, Errors::MissingOperator);
     } else if (!operatorOpt && !numberOpt) {

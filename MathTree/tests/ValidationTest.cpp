@@ -125,4 +125,27 @@ TEST(ValidationTest, AnUnrecognisedSymbolIsReportedAsAnErrorWithTheCorresponding
   auto symbolError = ArithmeticParser::Errors::UnrecognisedSymbol;
   EXPECT_THAT(errors, ElementsAre(Pair(2, symbolError)));
 }
+
+TEST(ValidationTest, sqrtCanBeAtTheBeginningOfAnExpression) {
+  auto errors = ArithmeticParser::validate("sqrt4");
+  auto operatorsError = ArithmeticParser::Errors::MissingOperator;
+  EXPECT_THAT(errors, IsEmpty());
+}
+
+TEST(ValidationTest, sqrtCanBeAtTheBeginningOfAnExpressionAndIgnoringSpaces) {
+  auto errors = ArithmeticParser::validate("    sqrt4");
+  auto operatorsError = ArithmeticParser::Errors::MissingOperator;
+  EXPECT_THAT(errors, IsEmpty());
+}
+
+TEST(ValidationTest, sqrtCannotBeImmediatelyPrecededByANumber) {
+  auto errors = ArithmeticParser::validate("2sqrt4");
+  auto operatorsError = ArithmeticParser::Errors::MissingOperator;
+  EXPECT_THAT(errors, ElementsAre(Pair(1, operatorsError)));
+}
+
+TEST(ValidationTest, sqrtCannotBeImmediatelyPrecededByANumberAndIgnoringSpaces) {
+  auto errors = ArithmeticParser::validate("2 sqrt4");
+  auto operatorsError = ArithmeticParser::Errors::MissingOperator;
+  EXPECT_THAT(errors, ElementsAre(Pair(2, operatorsError)));
 }
