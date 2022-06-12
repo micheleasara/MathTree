@@ -32,3 +32,7 @@ gtest_discover_tests(ValidationTest)
 add_executable(MatchersTest MatchersTest.cpp)
 target_link_libraries(MatchersTest ${TestingLibs})
 gtest_discover_tests(MatchersTest)
+
+add_executable(PrattParserTest PrattParserTest.cpp)
+target_link_libraries(PrattParserTest ${TestingLibs})
+gtest_discover_tests(PrattParserTest)
