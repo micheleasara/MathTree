@@ -159,3 +159,8 @@ TEST(ValidationTest, emptyBracketsAreReportedAsAnErrorWithTheCorrespondingIndexA
   auto operatorsError = ArithmeticParser::Errors::NothingBetweenBrackets;
   EXPECT_THAT(errors, ElementsAre(Pair(0, operatorsError)));
 }
+
+TEST(ValidationTest, sqrtCanBeCascaded) {
+  auto errors = ArithmeticParser::validate("sqrtsqrt4");
+  EXPECT_THAT(errors, IsEmpty());
+}
