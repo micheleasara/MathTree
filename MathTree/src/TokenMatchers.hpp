@@ -13,8 +13,8 @@ class TokenMatcher {
 public:
   virtual std::optional<Token> match(std::string_view source, size_t startIdx) = 0;
 
-  TokenMatcher const& operator=(TokenMatcher const&) = delete;
-  TokenMatcher&& operator=(TokenMatcher&&) = delete;
+  TokenMatcher& operator=(TokenMatcher const&) = delete;
+  TokenMatcher& operator=(TokenMatcher&&) = delete;
   virtual ~TokenMatcher() = default;
 };
 

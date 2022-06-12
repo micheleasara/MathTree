@@ -15,8 +15,8 @@ public:
                                             Token const& token) = 0;
   virtual int priority() const = 0;
 
-  InfixParselet const& operator=(InfixParselet const&) = delete;
-  InfixParselet&& operator=(InfixParselet&&) = delete;
+  InfixParselet& operator=(InfixParselet const&) = delete;
+  InfixParselet& operator=(InfixParselet&&) = delete;
   virtual ~InfixParselet() = default;
 };
 

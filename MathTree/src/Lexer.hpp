@@ -15,8 +15,8 @@ public:
   virtual Token next() = 0;
   virtual void reset() = 0;
   
-  Lexer const& operator=(Lexer const&) = delete;
-  Lexer&& operator=(Lexer&&) = delete;
+  Lexer& operator=(Lexer const&) = delete;
+  Lexer& operator=(Lexer&&) = delete;
   virtual ~Lexer() = default;
 };
 

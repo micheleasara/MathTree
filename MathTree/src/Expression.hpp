@@ -14,8 +14,8 @@ public:
   virtual double evaluate() const = 0;
   virtual void print(std::ostream& stream) const = 0;
 
-  Expression const& operator=(Expression const&) = delete;
-  Expression&& operator=(Expression&&) = delete;
+  Expression& operator=(Expression const&) = delete;
+  Expression& operator=(Expression&&) = delete;
   virtual ~Expression() = default;
 };
 

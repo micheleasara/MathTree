@@ -14,8 +14,8 @@ namespace MathTree {
 class Parser {
 public:
   virtual std::unique_ptr<Expression> parse() = 0;
-  Parser const& operator=(Parser const&) = delete;
-  Parser&& operator=(Parser&&) = delete;
+  Parser& operator=(Parser const&) = delete;
+  Parser& operator=(Parser&&) = delete;
   virtual ~Parser() = default;
 };
 

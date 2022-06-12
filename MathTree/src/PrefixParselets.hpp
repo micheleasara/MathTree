@@ -12,8 +12,8 @@ class PrefixParselet {
 public:
     virtual std::unique_ptr<Expression> parse(PrattParser& parser, Token const& token) = 0;
 
-    PrefixParselet const& operator=(PrefixParselet const&) = delete;
-    PrefixParselet&& operator=(PrefixParselet&&) = delete;
+    PrefixParselet& operator=(PrefixParselet const&) = delete;
+    PrefixParselet& operator=(PrefixParselet&&) = delete;
     virtual ~PrefixParselet() = default;
 };
 
