@@ -21,13 +21,13 @@ class ExpressionMock: public Expression {
 };
 using NiceExpressionMock = NiceMock<ExpressionMock>;
 
-class OperationsTest: public ::testing::Test {
+class BinaryExpressionsTest: public ::testing::Test {
   protected:
   std::unique_ptr<NiceExpressionMock> leftMock = std::make_unique<NiceExpressionMock>();
   std::unique_ptr<NiceExpressionMock> rightMock = std::make_unique<NiceExpressionMock>();
 };
 
-TEST_F(OperationsTest, evaluatingAnAdditionReturnsTheSumOfTheValuesOfBothAddends) {
+TEST_F(BinaryExpressionsTest, evaluatingAnAdditionReturnsTheSumOfTheValuesOfBothAddends) {
   EXPECT_CALL(*leftMock, evaluate()).WillOnce(Return(5.0));
   EXPECT_CALL(*rightMock, evaluate()).WillOnce(Return(4.1));
 
@@ -35,7 +35,7 @@ TEST_F(OperationsTest, evaluatingAnAdditionReturnsTheSumOfTheValuesOfBothAddends
   EXPECT_DOUBLE_EQ(adder.evaluate(), 9.1);
 }
 
-TEST_F(OperationsTest, evaluatingAMultiplicationReturnsTheProductOfTheValuesOfBothFactors) {
+TEST_F(BinaryExpressionsTest, evaluatingAMultiplicationReturnsTheProductOfTheValuesOfBothFactors) {
   EXPECT_CALL(*leftMock, evaluate()).WillOnce(Return(1.5));
   EXPECT_CALL(*rightMock, evaluate()).WillOnce(Return(4.0));
 
@@ -43,7 +43,7 @@ TEST_F(OperationsTest, evaluatingAMultiplicationReturnsTheProductOfTheValuesOfBo
   EXPECT_DOUBLE_EQ(multiplier.evaluate(), 6.0);
 }
 
-TEST_F(OperationsTest, evaluatingADivisionReturnsTheQuotientOfTheValuesOfTheDividendAndDivisor) {
+TEST_F(BinaryExpressionsTest, evaluatingADivisionReturnsTheQuotientOfTheValuesOfTheDividendAndDivisor) {
   EXPECT_CALL(*leftMock, evaluate()).WillOnce(Return(10.0));
   EXPECT_CALL(*rightMock, evaluate()).WillOnce(Return(5.0));
 
@@ -51,7 +51,7 @@ TEST_F(OperationsTest, evaluatingADivisionReturnsTheQuotientOfTheValuesOfTheDivi
   EXPECT_DOUBLE_EQ(divider.evaluate(), 2.0);
 }
 
-TEST_F(OperationsTest, dividingByZeroThrows) {
+TEST_F(BinaryExpressionsTest, dividingByZeroThrows) {
   EXPECT_CALL(*rightMock, evaluate()).WillOnce(Return(0.0));
 
   DivisionExpression divider{std::move(leftMock), TokenType::SLASH, std::move(rightMock)};

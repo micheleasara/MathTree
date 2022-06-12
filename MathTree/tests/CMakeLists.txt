@@ -21,9 +21,9 @@ add_executable(RealNumberTest RealNumberTest.cpp)
 target_link_libraries(RealNumberTest ${TestingLibs})
 gtest_discover_tests(RealNumberTest)
 
-add_executable(BinaryExpressionTest BinaryExpressionTest.cpp)
-target_link_libraries(BinaryExpressionTest ${TestingLibs})
-gtest_discover_tests(BinaryExpressionTest)
+add_executable(BinaryExpressionsTest BinaryExpressionsTest.cpp)
+target_link_libraries(BinaryExpressionsTest ${TestingLibs})
+gtest_discover_tests(BinaryExpressionsTest)
 
 add_executable(ValidationTest ValidationTest.cpp)
 target_link_libraries(ValidationTest ${TestingLibs})
