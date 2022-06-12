@@ -30,7 +30,7 @@ TEST(ValidationTest, unpairedClosingBracketsAreReportedAsErrorWithTheCorrespondi
   EXPECT_THAT(errors, ElementsAre(Pair(6, closingError)));
 }
 
-TEST(ValidationTest, twoOperatorsInARowExcludingSignsAreReportedAsErrorWithTheCorrespondingIndex) {
+TEST(ValidationTest, twoBinaryOperatorsInARowAreReportedAsErrorWithTheCorrespondingIndex) {
   auto operationError = ArithmeticParser::Errors::IncompleteOperation;
   auto errors = ArithmeticParser::validate("1**1*/1*^1+*1-*1");
   EXPECT_THAT(errors, ElementsAre(Pair(2, operationError),
@@ -40,14 +40,14 @@ TEST(ValidationTest, twoOperatorsInARowExcludingSignsAreReportedAsErrorWithTheCo
                                   Pair(14, operationError)));
 }
 
-TEST(ValidationTest, twoOperatorsInARowExcludingSignsAreReportedAsErrorWithTheCorrespondingIndexAndIgnoringSpaces) {
+TEST(ValidationTest, twoBinaryOperatorsInARowAreReportedAsErrorWithTheCorrespondingIndexAndIgnoringSpaces) {
   auto errors = ArithmeticParser::validate("2* *3/ *5");
   auto operationError = ArithmeticParser::Errors::IncompleteOperation;
   EXPECT_THAT(errors, ElementsAre(Pair(3, operationError),
                   Pair(7, operationError)));
 }
 
-TEST(ValidationTest, doesNotReportAnOperatorFollowedByAnyNumberOfSignsAsAnError) {
+TEST(ValidationTest, doesNotReportABinaryOperatorFollowedByAnyNumberOfSignsAsAnError) {
   auto errors = ArithmeticParser::validate("1++ 2+-3-+4--5* -6 ++++ 4");
   EXPECT_THAT(errors, IsEmpty());
 }
