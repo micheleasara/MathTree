@@ -15,9 +15,9 @@ SymbolMatcher::SymbolMatcher(std::initializer_list<TokenType> initList):
 
 std::optional<Token> SymbolMatcher::match(std::string_view source, size_t startIdx) {
   for (auto const& tokenType: m_tokenTypes) {
-    auto symbol = symbolise(tokenType);
+    auto symbol = symboliseTokenType(tokenType);
     if (source.substr(startIdx, symbol.size()) == symbol) {
-      return Token{tokenType, std::move(symbol)};
+      return Token{tokenType, std::string(symbol)};
     }
   }
   return std::nullopt;   

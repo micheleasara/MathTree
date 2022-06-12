@@ -1,30 +1,6 @@
 #include "Token.hpp"
-#include <stdexcept>
 
 namespace MathTree {
-
-std::string symbolise(TokenType type) {
-  switch (type) {
-  case TokenType::OPENING_BRACKET:
-    return "(";
-  case TokenType::CLOSING_BRACKET:
-    return ")";
-  case TokenType::PLUS:
-    return "+";
-  case TokenType::MINUS:
-    return "-";
-  case TokenType::ASTERISK:
-    return "*";
-  case TokenType::SLASH:
-    return "/";
-  case TokenType::CARET:
-    return "^";
-  case TokenType::SQUARE_ROOT:
-    return "sqrt";
-  default:
-    throw std::logic_error("Token without an associated symbol.");
-  }
-}
 
 Token::Token(TokenType type, std::string text): m_type(type), m_text(std::move(text)) {}
 

@@ -1,6 +1,8 @@
 #ifndef MATHTREE_TOKEN
 #define MATHTREE_TOKEN
+#include <stdexcept>
 #include <string>
+#include <string_view>
 
 namespace MathTree {
 
@@ -17,8 +19,6 @@ enum class TokenType {
   SQUARE_ROOT,
   STOP
 };
-  
-std::string symbolise(TokenType type);
 
 class Token {
 public:
@@ -34,6 +34,29 @@ private:
   TokenType m_type;
   std::string m_text;
 };
+
+constexpr std::string_view symboliseTokenType(TokenType type) {
+  switch (type) {
+  case TokenType::OPENING_BRACKET:
+    return "(";
+  case TokenType::CLOSING_BRACKET:
+    return ")";
+  case TokenType::PLUS:
+    return "+";
+  case TokenType::MINUS:
+    return "-";
+  case TokenType::ASTERISK:
+    return "*";
+  case TokenType::SLASH:
+    return "/";
+  case TokenType::CARET:
+    return "^";
+  case TokenType::SQUARE_ROOT:
+    return "sqrt";
+  default:
+    throw std::logic_error("Token without an associated symbol.");
+  }
+}
 
 }
 #endif // MATHTREE_TOKEN

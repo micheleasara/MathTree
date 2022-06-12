@@ -22,7 +22,7 @@ BinaryExpression::BinaryExpression(std::unique_ptr<Expression> left,
 void BinaryExpression::print(std::ostream& stream) const {
   stream << '(';
   left().print(stream);
-  stream << ' ' << symbolise(m_tokenType) << ' ';
+  stream << ' ' << symboliseTokenType(m_tokenType) << ' ';
   right().print(stream);
   stream << ')';
 }
@@ -40,7 +40,7 @@ NegativeSignExpression::NegativeSignExpression(TokenType operatorToken, std::uni
 }
 
 void NegativeSignExpression::print(std::ostream& stream) const {
-  stream << "(" << symbolise(m_operator);
+  stream << "(" << symboliseTokenType(m_operator);
   m_right->print(stream);
   stream << ")";
 }
@@ -103,7 +103,7 @@ double SquareRootExpression::evaluate() const {
 }
 
 void SquareRootExpression::print(std::ostream& stream) const {
-  stream << symbolise(m_tokenType) << "(";
+  stream << symboliseTokenType(m_tokenType) << "(";
   m_innerExpression->print(stream);
   stream << ")";
 }
