@@ -33,7 +33,7 @@ private:
 
 class UnsignedNumberMatcher: public TokenMatcher {
 public:
-    std::optional<Token> match(std::string_view source, size_t startIdx) override;
+  std::optional<Token> match(std::string_view source, size_t startIdx) override;
 };
 
 }
