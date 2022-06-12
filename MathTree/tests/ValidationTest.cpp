@@ -128,13 +128,11 @@ TEST(ValidationTest, anUnrecognisedSymbolIsReportedAsAnErrorWithTheCorresponding
 
 TEST(ValidationTest, sqrtCanBeAtTheBeginningOfAnExpression) {
   auto errors = ArithmeticParser::validate("sqrt4");
-  auto operatorsError = ArithmeticParser::Errors::MissingOperator;
   EXPECT_THAT(errors, IsEmpty());
 }
 
 TEST(ValidationTest, sqrtCanBeAtTheBeginningOfAnExpressionAndIgnoringSpaces) {
   auto errors = ArithmeticParser::validate("    sqrt4");
-  auto operatorsError = ArithmeticParser::Errors::MissingOperator;
   EXPECT_THAT(errors, IsEmpty());
 }
 
