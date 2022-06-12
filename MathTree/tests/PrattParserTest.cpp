@@ -93,3 +93,9 @@ TEST_F(PrattParserTest, callsInfixParseletWithThePrefixBeforeItAsItsArgument) {
   parser.parse();
 }
 
+TEST_F(PrattParserTest, theLexerIsResetAfterParsingIsCompleted) {
+  EXPECT_CALL(lexerMock, next).WillOnce(Return(tokenNum))
+                              .WillRepeatedly(DoDefault());
+  EXPECT_CALL(lexerMock, reset);
+  parser.parse();
+}
