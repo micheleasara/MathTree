@@ -4,12 +4,12 @@
 
 using MathTree::RealNumberExpression;
 
-TEST(NumbersTest, EvaluatingARealNumberReturnsTheNumberItself) {
+TEST(NumbersTest, evaluatingARealNumberReturnsTheNumberItself) {
   RealNumberExpression number{"42.2"};
   EXPECT_DOUBLE_EQ(number.evaluate(), 42.2);
 }
 
-TEST(NumbersTest, PrintingARealNumberPrintsTheNumberItself) {
+TEST(NumbersTest, printingARealNumberPrintsTheNumberItself) {
   std::string numStr{"42.2"};
   RealNumberExpression number{numStr};
   std::stringstream ss;
@@ -17,28 +17,28 @@ TEST(NumbersTest, PrintingARealNumberPrintsTheNumberItself) {
   EXPECT_EQ(ss.str(), numStr);
 }
 
-TEST(NumbersTest, CreatingARealNumberFromAStringWithLettersThrows) {
+TEST(NumbersTest, creatingARealNumberFromAStringWithLettersThrows) {
   EXPECT_ANY_THROW(RealNumberExpression{"4a5"});
 }
 
-TEST(NumbersTest, CreatingARealNumberFromAStringWithSpacesThrows) {
+TEST(NumbersTest, creatingARealNumberFromAStringWithSpacesThrows) {
   EXPECT_ANY_THROW(RealNumberExpression{" 45"});
 }
 
-TEST(NumbersTest, CreatingARealNumberWithInfinityThrows) {
+TEST(NumbersTest, creatingARealNumberWithInfinityThrows) {
   EXPECT_ANY_THROW(RealNumberExpression{"INFINITY"});
 }
 
-TEST(NumbersTest, CreatingARealNumberWithNaNThrows) {
+TEST(NumbersTest, creatingARealNumberWithNaNThrows) {
   EXPECT_ANY_THROW(RealNumberExpression{"NAN"});
 }
 
-TEST(NumbersTest, CreatingARealNumberUsingScientificNotationThrows) {
+TEST(NumbersTest, creatingARealNumberUsingScientificNotationThrows) {
   EXPECT_ANY_THROW(RealNumberExpression{"3e9"});
   EXPECT_ANY_THROW(RealNumberExpression{"3E9"});
 }
 
-TEST(NumbersTest, CreatingARealNumberUsingHexadecimalThrows) {
+TEST(NumbersTest, creatingARealNumberUsingHexadecimalThrows) {
   EXPECT_ANY_THROW(RealNumberExpression{"0x1"});
   EXPECT_ANY_THROW(RealNumberExpression{"0X1"});
 }

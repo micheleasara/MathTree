@@ -7,30 +7,30 @@ using ::testing::ElementsAre;
 using ::testing::Pair;
 using ::testing::IsEmpty;
 
-TEST(ValidationTest, CanValidateCorrectInputs) {
+TEST(ValidationTest, canValidateCorrectInputs) {
   auto errors = ArithmeticParser::validate("1+(3-2)^2^0*4/2");
   EXPECT_EQ(errors.size(), 0);
 }
 
-TEST(ValidationTest, CanValidateCorrectInputsWithSpaces) {
+TEST(ValidationTest, canValidateCorrectInputsWithSpaces) {
   auto errors = ArithmeticParser::validate(" 1 + ( 3 - 2 ) ^ 2 ^ 0 * 4 / 2 ");
   EXPECT_EQ(errors.size(), 0);
 }
 
-TEST(ValidationTest, UnpairedOpeningBracketsAreReportedAsErrorWithTheCorrespondingIndex) {
+TEST(ValidationTest, unpairedOpeningBracketsAreReportedAsErrorWithTheCorrespondingIndex) {
   auto errors = ArithmeticParser::validate("2-(1 + (3");
   auto openingError = ArithmeticParser::Errors::UnpairedOpeningBracket;
   EXPECT_THAT(errors, ElementsAre(Pair(2, openingError),
                   Pair(7, openingError)));
 }
 
-TEST(ValidationTest, UnpairedClosingBracketsAreReportedAsErrorWithTheCorrespondingIndex) {
+TEST(ValidationTest, unpairedClosingBracketsAreReportedAsErrorWithTheCorrespondingIndex) {
   auto errors = ArithmeticParser::validate("(2-1) )-3");
   auto closingError = ArithmeticParser::Errors::UnpairedClosingBracket;
   EXPECT_THAT(errors, ElementsAre(Pair(6, closingError)));
 }
 
-TEST(ValidationTest, TwoOperatorsInARowExcludingSignsAreReportedAsErrorWithTheCorrespondingIndex) {
+TEST(ValidationTest, twoOperatorsInARowExcludingSignsAreReportedAsErrorWithTheCorrespondingIndex) {
   auto operationError = ArithmeticParser::Errors::IncompleteOperation;
   auto errors = ArithmeticParser::validate("1**1*/1*^1+*1-*1");
   EXPECT_THAT(errors, ElementsAre(Pair(2, operationError),
@@ -40,87 +40,87 @@ TEST(ValidationTest, TwoOperatorsInARowExcludingSignsAreReportedAsErrorWithTheCo
                                   Pair(14, operationError)));
 }
 
-TEST(ValidationTest, TwoOperatorsInARowExcludingSignsAreReportedAsErrorWithTheCorrespondingIndexAndIgnoringSpaces) {
+TEST(ValidationTest, twoOperatorsInARowExcludingSignsAreReportedAsErrorWithTheCorrespondingIndexAndIgnoringSpaces) {
   auto errors = ArithmeticParser::validate("2* *3/ *5");
   auto operationError = ArithmeticParser::Errors::IncompleteOperation;
   EXPECT_THAT(errors, ElementsAre(Pair(3, operationError),
                   Pair(7, operationError)));
 }
 
-TEST(ValidationTest, DoesNotReportAnOperatorFollowedByAnyNumberOfSignsAsAnError) {
+TEST(ValidationTest, doesNotReportAnOperatorFollowedByAnyNumberOfSignsAsAnError) {
   auto errors = ArithmeticParser::validate("1++ 2+-3-+4--5* -6 ++++ 4");
   EXPECT_THAT(errors, IsEmpty());
 }
 
-TEST(ValidationTest, AnOperatorAtTheEndIsReportedAsIncompleteWithTheCorrespondingIndex) {
+TEST(ValidationTest, anOperatorAtTheEndIsReportedAsIncompleteWithTheCorrespondingIndex) {
   auto errors = ArithmeticParser::validate("2+3-");
   auto operationError = ArithmeticParser::Errors::IncompleteOperation;
   EXPECT_THAT(errors, ElementsAre(Pair(3, operationError)));
 }
 
-TEST(ValidationTest, AnOperatorAtTheEndIsReportedAsIncompleteWithTheCorrespondingIndexAndIgnoringSpaces) {
+TEST(ValidationTest, anOperatorAtTheEndIsReportedAsIncompleteWithTheCorrespondingIndexAndIgnoringSpaces) {
   auto errors = ArithmeticParser::validate("2+3 - ");
   auto operationError = ArithmeticParser::Errors::IncompleteOperation;
   EXPECT_THAT(errors, ElementsAre(Pair(4, operationError)));
 }
 
-TEST(ValidationTest, AnOperatorBeforeAClosingBracketIsReportedAsIncompleteWithTheCorrespondingIndex) {
+TEST(ValidationTest, anOperatorBeforeAClosingBracketIsReportedAsIncompleteWithTheCorrespondingIndex) {
   auto errors = ArithmeticParser::validate("2+(3-)+(9+)+5");
   auto operationError = ArithmeticParser::Errors::IncompleteOperation;
   EXPECT_THAT(errors, ElementsAre(Pair(4, operationError),
                   Pair(9, operationError)));
 }
 
-TEST(ValidationTest, AnOperatorBeforeAClosingBracketIsReportedAsIncompleteWithTheCorrespondingIndexAndIgnoringSpaces) {
+TEST(ValidationTest, anOperatorBeforeAClosingBracketIsReportedAsIncompleteWithTheCorrespondingIndexAndIgnoringSpaces) {
   auto errors = ArithmeticParser::validate("2+(3- )+(9+ )+5");
   auto operationError = ArithmeticParser::Errors::IncompleteOperation;
   EXPECT_THAT(errors, ElementsAre(Pair(4, operationError),
                                   Pair(10, operationError)));
 }
 
-TEST(ValidationTest, ANumberBeforeAnOpeningBracketIsReportedAsMissingOperatorWithTheCorrespondingIndex) {
+TEST(ValidationTest, aNumberBeforeAnOpeningBracketIsReportedAsMissingOperatorWithTheCorrespondingIndex) {
   auto errors = ArithmeticParser::validate("2(3-1)");
   auto operatorsError = ArithmeticParser::Errors::MissingOperator;
   EXPECT_THAT(errors, ElementsAre(Pair(1, operatorsError)));
 }
 
-TEST(ValidationTest, ANumberWithImpliedDecimalZeroBeforeAnOpeningBracketIsReportedAsErrorWithTheCorrespondingIndex) {
+TEST(ValidationTest, aNumberWithImpliedDecimalZeroBeforeAnOpeningBracketIsReportedAsErrorWithTheCorrespondingIndex) {
   auto errors = ArithmeticParser::validate("2.(3-1)");
   auto operatorsError = ArithmeticParser::Errors::MissingOperator;
   EXPECT_THAT(errors, ElementsAre(Pair(2, operatorsError)));
 }
 
-TEST(ValidationTest, ANumberBeforeAnOpeningBracketIsReportedAsErrorWithTheCorrespondingIndexAndIgnoringSpaces) {
+TEST(ValidationTest, aNumberBeforeAnOpeningBracketIsReportedAsErrorWithTheCorrespondingIndexAndIgnoringSpaces) {
   auto errors = ArithmeticParser::validate("2 (3-1)");
   auto operatorsError = ArithmeticParser::Errors::MissingOperator;
   EXPECT_THAT(errors, ElementsAre(Pair(2, operatorsError)));
 }
 
-TEST(ValidationTest, ANumberAfterAClosingBracketIsReportedAsMissingOperatorWithTheCorrespondingIndex) {
+TEST(ValidationTest, aNumberAfterAClosingBracketIsReportedAsMissingOperatorWithTheCorrespondingIndex) {
   auto errors = ArithmeticParser::validate("2+(3-1)3");
   auto operatorsError = ArithmeticParser::Errors::MissingOperator;
   EXPECT_THAT(errors, ElementsAre(Pair(7, operatorsError)));
 }
 
-TEST(ValidationTest, ANumberAfterAClosingBracketIsReportedAsMissingOperatorWithTheCorrespondingIndexAndIgnoringSpaces) {
+TEST(ValidationTest, aNumberAfterAClosingBracketIsReportedAsMissingOperatorWithTheCorrespondingIndexAndIgnoringSpaces) {
   auto errors = ArithmeticParser::validate("2+(3-1) 3");
   auto operatorsError = ArithmeticParser::Errors::MissingOperator;
   EXPECT_THAT(errors, ElementsAre(Pair(8, operatorsError)));
 }
 
-TEST(ValidationTest, RepeatedDecimalsAreReportedAsMissingOperatorWithTheCorrespondingIndex) {
+TEST(ValidationTest, repeatedDecimalsAreReportedAsMissingOperatorWithTheCorrespondingIndex) {
   auto errors = ArithmeticParser::validate("2.2.2+3");
   auto operatorsError = ArithmeticParser::Errors::MissingOperator;
   EXPECT_THAT(errors, ElementsAre(Pair(3, operatorsError)));
 }
 
-TEST(ValidationTest, RepeatedDecimalPointsAreReportedAsMissingOperatorWithTheCorrespondingIndex) {
+TEST(ValidationTest, repeatedDecimalPointsAreReportedAsMissingOperatorWithTheCorrespondingIndex) {
   auto errors = ArithmeticParser::validate("2..2+3");
   auto operatorsError = ArithmeticParser::Errors::MissingOperator;
   EXPECT_THAT(errors, ElementsAre(Pair(2, operatorsError)));
 }
 
-TEST(ValidationTest, AnUnrecognisedSymbolIsReportedAsAnErrorWithTheCorrespondingIndex) {
+TEST(ValidationTest, anUnrecognisedSymbolIsReportedAsAnErrorWithTheCorrespondingIndex) {
   auto errors = ArithmeticParser::validate("2+a*3");
   auto symbolError = ArithmeticParser::Errors::UnrecognisedSymbol;
   EXPECT_THAT(errors, ElementsAre(Pair(2, symbolError)));

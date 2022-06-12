@@ -10,40 +10,40 @@ using MathTree::SymbolMatcher;
 using MathTree::UnsignedNumberMatcher;
 
 
-TEST(MatchersTest, SymbolMatcherReturnsAnEmptyOptionalWhenTheIndexIsOutOfBounds) {
+TEST(MatchersTest, symbolMatcherReturnsAnEmptyOptionalWhenTheIndexIsOutOfBounds) {
   SymbolMatcher matcher({TokenType::PLUS});
   EXPECT_EQ(matcher.match("", 0), std::nullopt);
 }
 
-TEST(MatchersTest, SymbolMatcherMatchesOperatorsUsedForItsInitialisation) {
+TEST(MatchersTest, symbolMatcherMatchesOperatorsUsedForItsInitialisation) {
   SymbolMatcher matcher({TokenType::PLUS});
   EXPECT_THAT(matcher.match("1+1", 1), 
               Optional(Property(&MathTree::Token::text, "+")));
 }
 
-TEST(MatchersTest, SymbolMatcherDoesNotMatchOperatorsNotUsedForItsInitialisation) {
+TEST(MatchersTest, symbolMatcherDoesNotMatchOperatorsNotUsedForItsInitialisation) {
   SymbolMatcher matcher({TokenType::PLUS});
   EXPECT_EQ(matcher.match("1*1", 1), std::nullopt);
 }
 
-TEST(MatchersTest, UnsignedNumberMatcherReturnsAnEmptyOptionalWhenTheIndexIsOutOfBounds) {
+TEST(MatchersTest, unsignedNumberMatcherReturnsAnEmptyOptionalWhenTheIndexIsOutOfBounds) {
   UnsignedNumberMatcher matcher;
   EXPECT_EQ(matcher.match("", 1), std::nullopt);
 }
 
-TEST(MatchersTest, UnsignedNumberMatcherMatchesFirstInteger) {
+TEST(MatchersTest, unsignedNumberMatcherMatchesFirstInteger) {
   UnsignedNumberMatcher matcher;
   EXPECT_THAT(matcher.match("100+3", 0), 
               Optional(Property(&MathTree::Token::text, Eq("100"))));
 }
 
-TEST(MatchersTest, UnsignedNumberMatcherMatchesFirstFloatingPointNumber) {
+TEST(MatchersTest, unsignedNumberMatcherMatchesFirstFloatingPointNumber) {
   UnsignedNumberMatcher matcher;
   EXPECT_THAT(matcher.match("100.39+0.1", 0), 
               Optional(Property(&MathTree::Token::text, Eq("100.39"))));
 }
 
-TEST(MatchersTest, UnsignedNumberMatcherDoesNotMatchSignedNumbers) {
+TEST(MatchersTest, unsignedNumberMatcherDoesNotMatchSignedNumbers) {
   UnsignedNumberMatcher matcher;
   EXPECT_EQ(matcher.match("+100", 0), std::nullopt);
   EXPECT_EQ(matcher.match("-100", 0), std::nullopt);

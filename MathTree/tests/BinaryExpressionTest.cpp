@@ -27,7 +27,7 @@ class OperationsTest: public ::testing::Test {
   std::unique_ptr<NiceExpressionMock> rightMock = std::make_unique<NiceExpressionMock>();
 };
 
-TEST_F(OperationsTest, EvaluatingAnAdditionReturnsTheSumOfTheValuesOfBothAddends) {
+TEST_F(OperationsTest, evaluatingAnAdditionReturnsTheSumOfTheValuesOfBothAddends) {
   EXPECT_CALL(*leftMock, evaluate()).WillOnce(Return(5.0));
   EXPECT_CALL(*rightMock, evaluate()).WillOnce(Return(4.1));
 
@@ -35,7 +35,7 @@ TEST_F(OperationsTest, EvaluatingAnAdditionReturnsTheSumOfTheValuesOfBothAddends
   EXPECT_DOUBLE_EQ(adder.evaluate(), 9.1);
 }
 
-TEST_F(OperationsTest, EvaluatingAMultiplicationReturnsTheProductOfTheValuesOfBothFactors) {
+TEST_F(OperationsTest, evaluatingAMultiplicationReturnsTheProductOfTheValuesOfBothFactors) {
   EXPECT_CALL(*leftMock, evaluate()).WillOnce(Return(1.5));
   EXPECT_CALL(*rightMock, evaluate()).WillOnce(Return(4.0));
 
@@ -43,7 +43,7 @@ TEST_F(OperationsTest, EvaluatingAMultiplicationReturnsTheProductOfTheValuesOfBo
   EXPECT_DOUBLE_EQ(multiplier.evaluate(), 6.0);
 }
 
-TEST_F(OperationsTest, EvaluatingADivisionReturnsTheQuotientOfTheValuesOfTheDividendAndDivisor) {
+TEST_F(OperationsTest, evaluatingADivisionReturnsTheQuotientOfTheValuesOfTheDividendAndDivisor) {
   EXPECT_CALL(*leftMock, evaluate()).WillOnce(Return(10.0));
   EXPECT_CALL(*rightMock, evaluate()).WillOnce(Return(5.0));
 
@@ -51,7 +51,7 @@ TEST_F(OperationsTest, EvaluatingADivisionReturnsTheQuotientOfTheValuesOfTheDivi
   EXPECT_DOUBLE_EQ(divider.evaluate(), 2.0);
 }
 
-TEST_F(OperationsTest, DividingByZeroThrows) {
+TEST_F(OperationsTest, dividingByZeroThrows) {
   EXPECT_CALL(*rightMock, evaluate()).WillOnce(Return(0.0));
 
   DivisionExpression divider{std::move(leftMock), TokenType::SLASH, std::move(rightMock)};
