@@ -82,10 +82,8 @@ TEST_F(PrattParserTest, callsInfixParseletWithThePrefixBeforeItAsItsArgument) {
 
   EXPECT_CALL(lexerMock, next()).WillOnce(Return(tokenNum))
                                 .WillOnce(Return(tokenPlus))
-                                .WillOnce(Return(tokenNum))
-                                .WillRepeatedly(DoDefault()); // 1+1 and then stop
-  EXPECT_CALL(prefixMock, parse(_, _)).WillRepeatedly(
-                                                    Return(
+                                .WillRepeatedly(DoDefault()); // 1+ and then stop
+  EXPECT_CALL(prefixMock, parse(_, _)).WillOnce(Return(
                                                       ByMove(std::move(numberExprPtr))));
   EXPECT_CALL(infixMock, parse(Ref(parser),
                                Pointee(Ref(numberExpr)),
