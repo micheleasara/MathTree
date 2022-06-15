@@ -161,18 +161,28 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view in
 }
 
 ArithmeticParser::ArithmeticParser(std::string input): 
-                       m_parser(PrattParser(std::make_unique<ArithmeticLexer>(std::move(input)))) {
-  m_parser.setPrefixParselet(TokenType::PLUS, std::make_unique<PositiveSignParselet>(2));
-  m_parser.setPrefixParselet(TokenType::MINUS, std::make_unique<NegativeSignParselet>(2));
-  m_parser.setPrefixParselet(TokenType::NUMBER, std::make_unique<NumberParselet>());
-  m_parser.setPrefixParselet(TokenType::OPENING_BRACKET, std::make_unique<GroupParselet>());
-  m_parser.setPrefixParselet(TokenType::SQUARE_ROOT, std::make_unique<SquareRootParselet>(3));
+                                       m_parser(PrattParser(std::make_unique<ArithmeticLexer>(std::move(input)))) {
+  m_parser.setPrefixParselet(TokenType::PLUS,
+                             std::make_unique<PositiveSignParselet>(static_cast<int>(OperationPriority::SIGN)));
+  m_parser.setPrefixParselet(TokenType::MINUS,
+                             std::make_unique<NegativeSignParselet>(static_cast<int>(OperationPriority::SIGN)));
+  m_parser.setPrefixParselet(TokenType::NUMBER,
+                             std::make_unique<NumberParselet>());
+  m_parser.setPrefixParselet(TokenType::OPENING_BRACKET,
+                             std::make_unique<GroupParselet>());
+  m_parser.setPrefixParselet(TokenType::SQUARE_ROOT,
+                             std::make_unique<SquareRootParselet>(static_cast<int>(OperationPriority::SQUARE_ROOT)));
 
-  m_parser.setInfixParselet(TokenType::PLUS, std::make_unique<AdditionParselet>(1));
-  m_parser.setInfixParselet(TokenType::MINUS, std::make_unique<SubtractionParselet>(1));
-  m_parser.setInfixParselet(TokenType::ASTERISK, std::make_unique<MultiplicationParselet>(2));
-  m_parser.setInfixParselet(TokenType::SLASH, std::make_unique<DivisionParselet>(2));
-  m_parser.setInfixParselet(TokenType::CARET, std::make_unique<ExponentiationParselet>(3));
+  m_parser.setInfixParselet(TokenType::PLUS,
+                            std::make_unique<AdditionParselet>(static_cast<int>(OperationPriority::ADDITION)));
+  m_parser.setInfixParselet(TokenType::MINUS,
+                            std::make_unique<SubtractionParselet>(static_cast<int>(OperationPriority::SUBTRACTION)));
+  m_parser.setInfixParselet(TokenType::ASTERISK,
+                            std::make_unique<MultiplicationParselet>(static_cast<int>(OperationPriority::MULTIPLICATION)));
+  m_parser.setInfixParselet(TokenType::SLASH,
+                            std::make_unique<DivisionParselet>(static_cast<int>(OperationPriority::DIVISION)));
+  m_parser.setInfixParselet(TokenType::CARET,
+                            std::make_unique<ExponentiationParselet>(static_cast<int>(OperationPriority::EXPONENTIATION)));
 }
 
 std::unique_ptr<Expression> ArithmeticParser::parse() {

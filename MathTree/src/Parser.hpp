@@ -55,6 +55,18 @@ public:
     NothingBetweenBrackets
   };
   using IndexErrorPairs = std::vector<std::pair<size_t, Errors>>;
+
+  enum class OperationPriority {
+    MINIMUM = 0,
+    ADDITION = 1,
+    SUBTRACTION = 1,
+    SIGN = 2,
+    MULTIPLICATION = 2,
+    DIVISION = 2,
+    EXPONENTIATION = 3,
+    SQUARE_ROOT = 3
+  };
+
   static IndexErrorPairs validate(std::string_view input);
   
   ArithmeticParser(std::string input);
