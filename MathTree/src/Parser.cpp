@@ -33,7 +33,7 @@ std::unique_ptr<Expression> PrattParser::parse(int priority) {
   auto& prefix = *m_prefixParselets[token.type()];
   auto left = prefix.parse(*this, token);
 
-  while (priority < currentTokenPriority()) {
+  while (priority < infixPriorityFor(currentToken())) {
     token = consumeCurrentToken();
     auto& infix = *m_infixParselets[token.type()];
     left = infix.parse(*this, std::move(left), token);
@@ -56,12 +56,11 @@ Token PrattParser::consumeCurrentToken() {
   return token;
 }
 
-int PrattParser::currentTokenPriority() {
-  auto token = currentToken();
+int PrattParser::infixPriorityFor(Token const& token) {
   if (m_infixParselets.count(token.type()) <= 0) {
     return 0;
   }
-  InfixParselet& infix = *m_infixParselets[token.type()];
+  InfixParselet const& infix = *m_infixParselets[token.type()];
   return infix.priority();
 }
 

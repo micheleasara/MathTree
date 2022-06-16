@@ -34,7 +34,7 @@ public:
   void reset();
   
 private:
-  int currentTokenPriority();
+  int infixPriorityFor(Token const& token);
   Token const& currentToken();
 
   std::optional<Token> m_currentToken;
