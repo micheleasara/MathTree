@@ -44,7 +44,7 @@ std::optional<Token> UnsignedNumberMatcher::match(std::string_view source, size_
 
   auto numberStr = source.substr(startIdx, endIdx - startIdx);
   if (Utils::parseDouble(numberStr).has_value()) {
-    return Token{TokenType::NUMBER, std::string(numberStr)};
+    return Token{TokenType::Number, std::string(numberStr)};
   }
   return std::nullopt;
 }

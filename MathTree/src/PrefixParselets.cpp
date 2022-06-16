@@ -12,7 +12,7 @@ std::unique_ptr<Expression> NumberParselet::parse(PrattParser&, Token const& tok
 std::unique_ptr<Expression> GroupParselet::parse(PrattParser& parser, Token const&) {
   auto expression = parser.parse();
   auto nextToken = parser.consumeCurrentToken();
-  if (nextToken.type() != TokenType::CLOSING_BRACKET) {
+  if (nextToken.type() != TokenType::ClosingBracket) {
     throw std::logic_error("Expected a closing bracket during parsing.");
   }
   return expression;

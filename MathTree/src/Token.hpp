@@ -7,17 +7,16 @@
 namespace MathTree {
 
 enum class TokenType {
-  OPENING_BRACKET,
-  CLOSING_BRACKET,
-  COMMA,
-  PLUS,
-  MINUS,
-  ASTERISK,
-  SLASH,
-  CARET,
-  NUMBER,
-  SQUARE_ROOT,
-  STOP
+  OpeningBracket,
+  ClosingBracket,
+  Plus,
+  Minus,
+  Asterisk,
+  Slash,
+  Caret,
+  Number,
+  SquareRoot,
+  Stop
 };
 
 class Token {
@@ -37,21 +36,21 @@ private:
 
 constexpr std::string_view symboliseTokenType(TokenType type) {
   switch (type) {
-  case TokenType::OPENING_BRACKET:
+  case TokenType::OpeningBracket:
     return "(";
-  case TokenType::CLOSING_BRACKET:
+  case TokenType::ClosingBracket:
     return ")";
-  case TokenType::PLUS:
+  case TokenType::Plus:
     return "+";
-  case TokenType::MINUS:
+  case TokenType::Minus:
     return "-";
-  case TokenType::ASTERISK:
+  case TokenType::Asterisk:
     return "*";
-  case TokenType::SLASH:
+  case TokenType::Slash:
     return "/";
-  case TokenType::CARET:
+  case TokenType::Caret:
     return "^";
-  case TokenType::SQUARE_ROOT:
+  case TokenType::SquareRoot:
     return "sqrt";
   default:
     throw std::logic_error("Token without an associated symbol.");

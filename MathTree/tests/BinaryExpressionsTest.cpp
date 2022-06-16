@@ -31,7 +31,7 @@ TEST_F(BinaryExpressionsTest, evaluatingAnAdditionReturnsTheSumOfTheValuesOfBoth
   EXPECT_CALL(*leftMock, evaluate()).WillOnce(Return(5.0));
   EXPECT_CALL(*rightMock, evaluate()).WillOnce(Return(4.1));
 
-  AdditionExpression adder{std::move(leftMock), TokenType::PLUS, std::move(rightMock)};
+  AdditionExpression adder{std::move(leftMock), TokenType::Plus, std::move(rightMock)};
   EXPECT_DOUBLE_EQ(adder.evaluate(), 9.1);
 }
 
@@ -39,7 +39,7 @@ TEST_F(BinaryExpressionsTest, evaluatingAMultiplicationReturnsTheProductOfTheVal
   EXPECT_CALL(*leftMock, evaluate()).WillOnce(Return(1.5));
   EXPECT_CALL(*rightMock, evaluate()).WillOnce(Return(4.0));
 
-  MultiplicationExpression multiplier{std::move(leftMock), TokenType::ASTERISK, std::move(rightMock)};
+  MultiplicationExpression multiplier{std::move(leftMock), TokenType::Asterisk, std::move(rightMock)};
   EXPECT_DOUBLE_EQ(multiplier.evaluate(), 6.0);
 }
 
@@ -47,13 +47,13 @@ TEST_F(BinaryExpressionsTest, evaluatingADivisionReturnsTheQuotientOfTheValuesOf
   EXPECT_CALL(*leftMock, evaluate()).WillOnce(Return(10.0));
   EXPECT_CALL(*rightMock, evaluate()).WillOnce(Return(5.0));
 
-  DivisionExpression divider{std::move(leftMock), TokenType::SLASH, std::move(rightMock)};
+  DivisionExpression divider{std::move(leftMock), TokenType::Slash, std::move(rightMock)};
   EXPECT_DOUBLE_EQ(divider.evaluate(), 2.0);
 }
 
 TEST_F(BinaryExpressionsTest, dividingByZeroThrows) {
   EXPECT_CALL(*rightMock, evaluate()).WillOnce(Return(0.0));
 
-  DivisionExpression divider{std::move(leftMock), TokenType::SLASH, std::move(rightMock)};
+  DivisionExpression divider{std::move(leftMock), TokenType::Slash, std::move(rightMock)};
   EXPECT_ANY_THROW(divider.evaluate());
 }

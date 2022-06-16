@@ -51,15 +51,15 @@ protected:
   NiceInfixParseletMock& infixMock{*infixMockPtr};
 
   PrattParser parser{std::move(lexerMockPtr)};
-  Token tokenNum{TokenType::NUMBER, "1"};
-  Token tokenPlus{TokenType::PLUS, "+"};
+  Token tokenNum{TokenType::Number, "1"};
+  Token tokenPlus{TokenType::Plus, "+"};
 
   void SetUp() override {
     ON_CALL(lexerMock, next()).WillByDefault(
-                                     Return(Token(TokenType::STOP, "")));
+                                     Return(Token(TokenType::Stop, "")));
     ON_CALL(infixMock, priority()).WillByDefault(Return(1));
-    parser.setPrefixParselet(TokenType::NUMBER, std::move(prefixMockPtr));
-    parser.setInfixParselet(TokenType::PLUS, std::move(infixMockPtr));
+    parser.setPrefixParselet(TokenType::Number, std::move(prefixMockPtr));
+    parser.setInfixParselet(TokenType::Plus, std::move(infixMockPtr));
   }
 };
 

@@ -11,18 +11,18 @@ using MathTree::UnsignedNumberMatcher;
 
 
 TEST(MatchersTest, symbolMatcherReturnsAnEmptyOptionalWhenTheIndexIsOutOfBounds) {
-  SymbolMatcher matcher({TokenType::PLUS});
+  SymbolMatcher matcher({TokenType::Plus});
   EXPECT_EQ(matcher.match("", 0), std::nullopt);
 }
 
 TEST(MatchersTest, symbolMatcherMatchesOperatorsUsedForItsInitialisation) {
-  SymbolMatcher matcher({TokenType::PLUS});
+  SymbolMatcher matcher({TokenType::Plus});
   EXPECT_THAT(matcher.match("1+1", 1), 
               Optional(Property(&MathTree::Token::text, "+")));
 }
 
 TEST(MatchersTest, symbolMatcherDoesNotMatchOperatorsNotUsedForItsInitialisation) {
-  SymbolMatcher matcher({TokenType::PLUS});
+  SymbolMatcher matcher({TokenType::Plus});
   EXPECT_EQ(matcher.match("1*1", 1), std::nullopt);
 }
 

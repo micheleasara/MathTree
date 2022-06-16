@@ -5,10 +5,10 @@
 
 namespace MathTree {
 
-auto constexpr symbolsList = {TokenType::PLUS, TokenType::MINUS,
-                                    TokenType::SLASH, TokenType::ASTERISK,
-                                    TokenType::CARET, TokenType::SQUARE_ROOT,
-                                    TokenType::OPENING_BRACKET, TokenType::CLOSING_BRACKET};
+auto constexpr symbolsList = {TokenType::Plus, TokenType::Minus,
+                                    TokenType::Slash, TokenType::Asterisk,
+                                    TokenType::Caret, TokenType::SquareRoot,
+                                    TokenType::OpeningBracket, TokenType::ClosingBracket};
 
 ArithmeticLexer::ArithmeticLexer(): ArithmeticLexer("") {}
 
@@ -33,7 +33,7 @@ Token ArithmeticLexer::next() {
     throw std::logic_error("Lexer could not extract token at index " +
                                    std::to_string(m_currentIndex) + ".");
   }
-  return {TokenType::STOP, ""};
+  return {TokenType::Stop, ""};
 }
 
 void ArithmeticLexer::reset(std::string newText) {
