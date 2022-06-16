@@ -41,7 +41,7 @@ private:
   std::unordered_map<TokenType, std::unique_ptr<PrefixParselet>> m_prefixParselets;
   std::unordered_map<TokenType, std::unique_ptr<InfixParselet>> m_infixParselets;
   std::unique_ptr<Lexer> m_lexer;
-  int parseCallCount = 0;
+  int m_parseCallCount = 0;
 };
 
 class ArithmeticParser: public Parser {

@@ -26,7 +26,7 @@ std::unique_ptr<Expression> PrattParser::parse() {
 }
 
 std::unique_ptr<Expression> PrattParser::parse(int priority) {
-  ReferenceCountingResetter countingResetter(parseCallCount, *this);
+  ReferenceCountingResetter countingResetter(m_parseCallCount, *this);
   auto token = consumeCurrentToken();
   if (m_prefixParselets.count(token.type()) <= 0) {
     throw std::logic_error("Expected a prefix parselet while parsing.");
