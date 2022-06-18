@@ -36,3 +36,7 @@ gtest_discover_tests(MatchersTest)
 add_executable(PrattParserTest PrattParserTest.cpp)
 target_link_libraries(PrattParserTest ${TestingLibs})
 gtest_discover_tests(PrattParserTest)
+
+add_executable(UnaryExpressionsTest UnaryExpressionsTest.cpp)
+target_link_libraries(UnaryExpressionsTest ${TestingLibs})
+gtest_discover_tests(UnaryExpressionsTest)

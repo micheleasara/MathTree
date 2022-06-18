@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include "Expression.hpp"
+#include "ExpressionMock.hpp"
 #include <iostream>
 #include "Token.hpp"
 
@@ -11,15 +12,6 @@ using MathTree::MultiplicationExpression;
 using MathTree::TokenType;
 
 using ::testing::Return;
-using ::testing::NiceMock;
-
-class ExpressionMock: public Expression {
-  public:
-  MOCK_METHOD(double, evaluate, (), (const, override));
-  MOCK_METHOD(void, print, (std::ostream&), (const, override));
-
-};
-using NiceExpressionMock = NiceMock<ExpressionMock>;
 
 class BinaryExpressionsTest: public ::testing::Test {
   protected:
