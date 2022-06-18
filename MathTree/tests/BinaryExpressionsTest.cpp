@@ -9,6 +9,7 @@ using MathTree::Expression;
 using MathTree::AdditionExpression;
 using MathTree::DivisionExpression;
 using MathTree::MultiplicationExpression;
+using MathTree::ExponentiationExpression;
 using MathTree::TokenType;
 
 using ::testing::Return;
@@ -48,4 +49,36 @@ TEST_F(BinaryExpressionsTest, dividingByZeroThrows) {
 
   DivisionExpression divider{std::move(leftMock), TokenType::Slash, std::move(rightMock)};
   EXPECT_ANY_THROW(divider.evaluate());
+}
+
+TEST_F(BinaryExpressionsTest, zeroToTheZerothPowerThrows) {
+  EXPECT_CALL(*leftMock, evaluate()).WillOnce(Return(0.0));
+  EXPECT_CALL(*rightMock, evaluate()).WillOnce(Return(0.0));
+
+  ExponentiationExpression power{std::move(leftMock), TokenType::Caret, std::move(rightMock)};
+  EXPECT_ANY_THROW(power.evaluate());
+}
+
+TEST_F(BinaryExpressionsTest, zeroToANegativePowerThrows) {
+  EXPECT_CALL(*leftMock, evaluate()).WillOnce(Return(0.0));
+  EXPECT_CALL(*rightMock, evaluate()).WillOnce(Return(-3.0));
+
+  ExponentiationExpression power{std::move(leftMock), TokenType::Caret, std::move(rightMock)};
+  EXPECT_ANY_THROW(power.evaluate());
+}
+
+TEST_F(BinaryExpressionsTest, evaluatingThePowerOfANegativeNumberThrowsWhenTheExponentIsNotAnInteger) {
+  EXPECT_CALL(*leftMock, evaluate()).WillOnce(Return(-3));
+  EXPECT_CALL(*rightMock, evaluate()).WillOnce(Return(0.5));
+
+  ExponentiationExpression power{std::move(leftMock), TokenType::Caret, std::move(rightMock)};
+  EXPECT_ANY_THROW(power.evaluate());
+}
+
+TEST_F(BinaryExpressionsTest, evaluatingAPowerReturnsTheBaseRaisedToTheExponent) {
+  EXPECT_CALL(*leftMock, evaluate()).WillOnce(Return(2.0));
+  EXPECT_CALL(*rightMock, evaluate()).WillOnce(Return(3.0));
+
+  ExponentiationExpression power{std::move(leftMock), TokenType::Caret, std::move(rightMock)};
+  EXPECT_DOUBLE_EQ(power.evaluate(), 8.0);
 }

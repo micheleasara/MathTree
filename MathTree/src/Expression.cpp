@@ -86,7 +86,17 @@ double DivisionExpression::evaluate() const {
 }
 
 double ExponentiationExpression::evaluate() const {
-  return std::pow(left().evaluate(), right().evaluate());
+  auto leftEval = left().evaluate();
+  auto rightEval = right().evaluate();
+  if ((leftEval == 0.0 && rightEval <= 0.0) ||
+      (leftEval < 0.0 && std::floor(rightEval) != std::ceil(rightEval))) {
+    // 0^0 is not defined for real numbers
+    // 0^a with a < 0 implies 1/0, which is not a real number
+    // a^b with a < 0 is only a real number when b is an integer
+    throw std::logic_error("Cannot compute " + std::to_string(leftEval) +
+                           " to the power of " + std::to_string(rightEval) + ".");
+  }
+  return std::pow(leftEval, rightEval);
 }
 
 SquareRootExpression::SquareRootExpression(std::unique_ptr<Expression> innerExpression, 
