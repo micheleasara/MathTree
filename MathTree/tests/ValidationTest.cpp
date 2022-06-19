@@ -6,15 +6,16 @@ using MathTree::ArithmeticParser;
 using ::testing::ElementsAre;
 using ::testing::Pair;
 using ::testing::IsEmpty;
+using ::testing::Contains;
 
 TEST(ValidationTest, canValidateCorrectInputs) {
   auto errors = ArithmeticParser::validate("1+(3-2)^2^0*4/2");
-  EXPECT_EQ(errors.size(), 0);
+  EXPECT_THAT(errors, IsEmpty());
 }
 
 TEST(ValidationTest, canValidateCorrectInputsWithSpaces) {
   auto errors = ArithmeticParser::validate(" 1 + ( 3 - 2 ) ^ 2 ^ 0 * 4 / 2 ");
-  EXPECT_EQ(errors.size(), 0);
+  EXPECT_THAT(errors, IsEmpty());
 }
 
 TEST(ValidationTest, unpairedOpeningBracketsAreReportedAsErrorWithTheCorrespondingIndex) {
@@ -44,7 +45,27 @@ TEST(ValidationTest, twoBinaryOperatorsInARowAreReportedAsErrorWithTheCorrespond
   auto errors = ArithmeticParser::validate("2* *3/ *5");
   auto operationError = ArithmeticParser::Errors::IncompleteOperation;
   EXPECT_THAT(errors, ElementsAre(Pair(3, operationError),
-                  Pair(7, operationError)));
+                                  Pair(7, operationError)));
+}
+
+TEST(ValidationTest, aBinaryOperatorAtTheStartIsReportedAsAnErrorWithTheCorrespondingIndex) {
+  auto errors = ArithmeticParser::validate("*3");
+  EXPECT_THAT(errors, ElementsAre(Pair(0, ArithmeticParser::Errors::IncompleteOperation)));
+}
+
+TEST(ValidationTest, aBinaryOperatorAtTheStartIsReportedAsAnErrorWithTheCorrespondingIndexAndIgnoringSpaces) {
+  auto errors = ArithmeticParser::validate(" *3");
+  EXPECT_THAT(errors, ElementsAre(Pair(1, ArithmeticParser::Errors::IncompleteOperation)));
+}
+
+TEST(ValidationTest, aBinaryOperatorAfterAnOpeningBracketIsReportedAsAnErrorWithTheCorrespondingIndex) {
+  auto errors = ArithmeticParser::validate("(*3)");
+  EXPECT_THAT(errors, ElementsAre(Pair(1, ArithmeticParser::Errors::IncompleteOperation)));
+}
+
+TEST(ValidationTest, aBinaryOperatorAfterAnOpeningBracketIsReportedAsAnErrorWithTheCorrespondingIndexAndIgnoringSpaces) {
+  auto errors = ArithmeticParser::validate("( *3)");
+  EXPECT_THAT(errors, ElementsAre(Pair(2, ArithmeticParser::Errors::IncompleteOperation)));
 }
 
 TEST(ValidationTest, doesNotReportABinaryOperatorFollowedByAnyNumberOfSignsAsAnError) {
@@ -123,7 +144,7 @@ TEST(ValidationTest, repeatedDecimalPointsAreReportedAsMissingOperatorWithTheCor
 TEST(ValidationTest, anUnrecognisedSymbolIsReportedAsAnErrorWithTheCorrespondingIndex) {
   auto errors = ArithmeticParser::validate("2+a*3");
   auto symbolError = ArithmeticParser::Errors::UnrecognisedSymbol;
-  EXPECT_THAT(errors, ElementsAre(Pair(2, symbolError)));
+  EXPECT_THAT(errors, Contains(Pair(2, symbolError)));
 }
 
 TEST(ValidationTest, sqrtCanBeAtTheBeginningOfAnExpression) {

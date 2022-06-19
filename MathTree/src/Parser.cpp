@@ -135,9 +135,11 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view in
       if (isSqrt && !wasOperator && lastNonSpaceIdx != -1) {
         // sqrt must be preceded by an operator or it must be at the start of the expression
         idxErrorPairs.emplace_back(i, Errors::MissingOperator);
-      } else if (wasOperator && !isSqrt && !signMatcher.match(operatorOpt->text(), 0)) {
-        // allow expressions like 1+-2, 2++3, sqrtsqrt3, 2-sqrt2 and so on
-        // but disallow other operators from appearing in a row without numbers between them
+      } else if ((wasOperator || lastNonSpaceIdx == -1 || input[lastNonSpaceIdx] == '(') && 
+                                           !isSqrt && !signMatcher.match(operatorOpt->text(), 0)) {
+        // allow expressions like 1+-2, 2++3, sqrtsqrt3, 2-sqrt2 and so on, but disallow
+        // other operators from appearing in a row without numbers between them.
+        // Also ensure no binary operator is at the start of the expression.
         idxErrorPairs.emplace_back(i, Errors::IncompleteOperation);
       }
     } else if (numberOpt && (wasNumber || (lastNonSpaceIdx > -1 && input[lastNonSpaceIdx] == ')'))) {
