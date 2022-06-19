@@ -17,6 +17,10 @@ add_executable(ArithmeticLexerTest ArithmeticLexerTest.cpp)
 target_link_libraries(ArithmeticLexerTest ${TestingLibs})
 gtest_discover_tests(ArithmeticLexerTest)
 
+add_executable(ArithmeticParserTest ArithmeticParserTest.cpp)
+target_link_libraries(ArithmeticParserTest ${TestingLibs})
+gtest_discover_tests(ArithmeticParserTest)
+
 add_executable(RealNumberTest RealNumberTest.cpp)
 target_link_libraries(RealNumberTest ${TestingLibs})
 gtest_discover_tests(RealNumberTest)
