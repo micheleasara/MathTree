@@ -6,34 +6,31 @@
 #include "Expression.hpp"
 #include "InfixParselets.hpp"
 #include "Lexer.hpp"
+#include <limits>
 #include "PrefixParselets.hpp"
 #include "Token.hpp"
 #include <unordered_map>
 
 namespace MathTree {
-class Parser {
-public:
-  virtual std::unique_ptr<Expression> parse() = 0;
-  Parser& operator=(Parser const&) = delete;
-  Parser& operator=(Parser&&) = delete;
-  virtual ~Parser() = default;
-};
 
-class PrattParser: public Parser {
+class PrattParser {
 public:
   PrattParser(std::unique_ptr<Lexer> lexer);
 
-  std::unique_ptr<Expression> parse() override;
+  std::unique_ptr<Expression> parse();
   std::unique_ptr<Expression> parse(int priority);
+  std::unique_ptr<Expression> parse(std::string input,
+                                    int priority = std::numeric_limits<int>::min());
 
   void setPrefixParselet(TokenType token, std::unique_ptr<PrefixParselet> parselet);
   void setInfixParselet(TokenType token, std::unique_ptr<InfixParselet> parselet);
 
   Token consumeCurrentToken();
-
-  void reset();
   
 private:
+  class ReferenceCountingResetter;
+
+  void reset();
   int infixPriorityFor(Token const& token);
   Token const& currentToken();
 
@@ -44,7 +41,7 @@ private:
   int m_parseCallCount = 0;
 };
 
-class ArithmeticParser: public Parser {
+class ArithmeticParser {
 public:
   enum class Errors {
     UnpairedOpeningBracket,
@@ -69,8 +66,8 @@ public:
 
   static IndexErrorPairs validate(std::string_view input);
   
-  ArithmeticParser(std::string input);
-  std::unique_ptr<Expression> parse() override;
+  ArithmeticParser();
+  std::unique_ptr<Expression> parse(std::string input);
 
 private:
   PrattParser m_parser;

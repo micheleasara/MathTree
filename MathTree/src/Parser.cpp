@@ -4,18 +4,18 @@
 
 namespace MathTree {
 
-class ReferenceCountingResetter {
+class PrattParser::ReferenceCountingResetter {
 public:
-  ReferenceCountingResetter(int& counter, PrattParser& parser): 
-                         m_counter(++counter), m_parser(parser) {}
+  ReferenceCountingResetter(PrattParser& parser): m_parser(parser) {
+    ++m_parser.m_parseCallCount;
+  }
   ~ReferenceCountingResetter() { 
-    if (--m_counter <= 0) {
+    if (--m_parser.m_parseCallCount <= 0) {
       m_parser.reset();
     }
   }
 
 private:
-  int& m_counter;
   PrattParser& m_parser;
 };
 
@@ -26,7 +26,7 @@ std::unique_ptr<Expression> PrattParser::parse() {
 }
 
 std::unique_ptr<Expression> PrattParser::parse(int priority) {
-  ReferenceCountingResetter countingResetter(m_parseCallCount, *this);
+  ReferenceCountingResetter countingResetter(*this);
   auto token = consumeCurrentToken();
   if (m_prefixParselets.count(token.type()) <= 0) {
     throw std::logic_error("Expected a prefix parselet while parsing.");
@@ -41,6 +41,11 @@ std::unique_ptr<Expression> PrattParser::parse(int priority) {
   }
 
   return left;
+}
+
+std::unique_ptr<Expression> PrattParser::parse(std::string input, int priority) {
+  m_lexer->reset(std::move(input));
+  return parse(priority);
 }
 
 void PrattParser::setPrefixParselet(TokenType token, std::unique_ptr<PrefixParselet> parselet) {
@@ -160,8 +165,7 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view in
   return idxErrorPairs;
 }
 
-ArithmeticParser::ArithmeticParser(std::string input): 
-                                       m_parser(PrattParser(std::make_unique<ArithmeticLexer>(std::move(input)))) {
+ArithmeticParser::ArithmeticParser(): m_parser(PrattParser(std::make_unique<ArithmeticLexer>())) {
   m_parser.setPrefixParselet(TokenType::Plus,
                              std::make_unique<PositiveSignParselet>(static_cast<int>(OperationPriority::Sign)));
   m_parser.setPrefixParselet(TokenType::Minus,
@@ -185,8 +189,8 @@ ArithmeticParser::ArithmeticParser(std::string input):
                             std::make_unique<ExponentiationParselet>(static_cast<int>(OperationPriority::Exponentiation)));
 }
 
-std::unique_ptr<Expression> ArithmeticParser::parse() {
-  return m_parser.parse();
+std::unique_ptr<Expression> ArithmeticParser::parse(std::string input) {
+  return m_parser.parse(std::move(input));
 }
 
 }

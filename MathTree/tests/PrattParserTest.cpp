@@ -22,6 +22,7 @@ class LexerMock: public MathTree::Lexer {
 public:
   MOCK_METHOD(Token, next, (), ());
   MOCK_METHOD(void, reset, (), ());
+  MOCK_METHOD(void, reset, (std::string), ());
 };
 using NiceLexerMock = NiceMock<LexerMock>;
 
@@ -94,6 +95,6 @@ TEST_F(PrattParserTest, callsInfixParseletWithThePrefixBeforeItAsItsArgument) {
 TEST_F(PrattParserTest, theLexerIsResetAfterParsingIsCompleted) {
   EXPECT_CALL(lexerMock, next).WillOnce(Return(tokenNum))
                               .WillRepeatedly(DoDefault());
-  EXPECT_CALL(lexerMock, reset);
+  EXPECT_CALL(lexerMock, reset());
   parser.parse();
 }

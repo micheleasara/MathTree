@@ -14,7 +14,8 @@ class Lexer {
 public:
   virtual Token next() = 0;
   virtual void reset() = 0;
-  
+  virtual void reset(std::string) = 0;
+
   Lexer& operator=(Lexer const&) = delete;
   Lexer& operator=(Lexer&&) = delete;
   virtual ~Lexer() = default;
@@ -25,8 +26,8 @@ public:
   ArithmeticLexer();
   ArithmeticLexer(std::string text);
   Token next() override;
-  void reset(std::string newText);
-  void reset();
+  void reset(std::string newText) override;
+  void reset() override;
 
 private:
   std::string m_text;

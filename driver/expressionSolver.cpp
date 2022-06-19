@@ -13,6 +13,7 @@ void printError(size_t idx, MathTree::ArithmeticParser::Errors error);
 
 int main() {
   using namespace MathTree;
+  ArithmeticParser parser;
 
   while(true) {
     std::string input;
@@ -32,9 +33,8 @@ int main() {
       continue;
     }
 
-    ArithmeticParser parser(std::move(input));
     try {
-      auto expression = parser.parse();
+      auto expression = parser.parse(std::move(input));
       std::cout << "Expression parsed as ";
       expression->print(std::cout);
       std::cout << "\n";
