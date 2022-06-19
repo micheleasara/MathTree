@@ -83,14 +83,12 @@ void PrattParser::reset() {
 }
 
 ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view input) {
-  static auto constexpr operatorsList = {TokenType::Plus, TokenType::Minus,
+  static SymbolMatcher const operatorMatcher({TokenType::Plus, TokenType::Minus,
                                           TokenType::Slash, TokenType::Asterisk,
-                                          TokenType::Caret, TokenType::SquareRoot};
-  static auto constexpr signsList = {TokenType::Plus, TokenType::Minus};
-  static SymbolMatcher operatorMatcher(operatorsList);
-  static SymbolMatcher signMatcher(signsList);
-  static SymbolMatcher sqrtMatcher({TokenType::SquareRoot});
-  static UnsignedNumberMatcher numberMatcher;
+                                          TokenType::Caret, TokenType::SquareRoot});
+  static SymbolMatcher const signMatcher({TokenType::Plus, TokenType::Minus});
+  static SymbolMatcher const sqrtMatcher({TokenType::SquareRoot});
+  static UnsignedNumberMatcher const numberMatcher;
   
   if (input.size() <= 0) {
     return IndexErrorPairs{};
