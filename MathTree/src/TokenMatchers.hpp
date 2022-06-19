@@ -26,6 +26,7 @@ public:
   SymbolMatcher(std::initializer_list<TokenType> initList);
 
   std::optional<Token> match(std::string_view source, size_t startIdx) override;
+  std::optional<Token> match(std::string_view source, size_t startIdx) const;
 
 private:
   std::vector<TokenType> m_tokenTypes;
@@ -34,6 +35,7 @@ private:
 class UnsignedNumberMatcher: public TokenMatcher {
 public:
   std::optional<Token> match(std::string_view source, size_t startIdx) override;
+  std::optional<Token> match(std::string_view source, size_t startIdx) const;
 };
 
 }

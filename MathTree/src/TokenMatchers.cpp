@@ -14,6 +14,10 @@ SymbolMatcher::SymbolMatcher(std::initializer_list<TokenType> initList):
                                                         SymbolMatcher(initList.begin(), initList.end()) {}
 
 std::optional<Token> SymbolMatcher::match(std::string_view source, size_t startIdx) {
+  return static_cast<SymbolMatcher const&>(*this).match(source, startIdx);
+}
+
+std::optional<Token> SymbolMatcher::match(std::string_view source, size_t startIdx) const {
   for (auto const& tokenType: m_tokenTypes) {
     auto symbol = symboliseTokenType(tokenType);
     if (source.substr(startIdx, symbol.size()) == symbol) {
@@ -24,6 +28,10 @@ std::optional<Token> SymbolMatcher::match(std::string_view source, size_t startI
 }
 
 std::optional<Token> UnsignedNumberMatcher::match(std::string_view source, size_t startIdx) {
+  return static_cast<UnsignedNumberMatcher const&>(*this).match(source, startIdx);
+}
+
+std::optional<Token> UnsignedNumberMatcher::match(std::string_view source, size_t startIdx) const {
   if (startIdx >= source.size()) {
     return std::nullopt;
   }
