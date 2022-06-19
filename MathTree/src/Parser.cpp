@@ -87,7 +87,6 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view in
                                           TokenType::Slash, TokenType::Asterisk,
                                           TokenType::Caret, TokenType::SquareRoot});
   static SymbolMatcher const signMatcher({TokenType::Plus, TokenType::Minus});
-  static SymbolMatcher const sqrtMatcher({TokenType::SquareRoot});
   static UnsignedNumberMatcher const numberMatcher;
   
   if (input.size() <= 0) {
@@ -131,9 +130,10 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view in
         idxErrorPairs.emplace_back(lastNonSpaceIdx, Errors::IncompleteOperation);
       }
     } else if (operatorOpt) {
-      auto isSqrt = sqrtMatcher.match(operatorOpt->text(), 0);
-      if (isSqrt && !wasOperator && lastNonSpaceIdx != -1) {
-        // sqrt must be preceded by an operator or it must be at the start of the expression
+      auto isSqrt = operatorOpt->type() == TokenType::SquareRoot;
+      if (isSqrt && !wasOperator && lastNonSpaceIdx != -1 && input[lastNonSpaceIdx] != '(') {
+        // sqrt must be preceded by an operator, or by an opening bracket,
+        // or it must be at the start of the expression
         idxErrorPairs.emplace_back(i, Errors::MissingOperator);
       } else if ((wasOperator || lastNonSpaceIdx == -1 || input[lastNonSpaceIdx] == '(') && 
                                            !isSqrt && !signMatcher.match(operatorOpt->text(), 0)) {

@@ -169,6 +169,16 @@ TEST(ValidationTest, sqrtCannotBeImmediatelyPrecededByANumberAndIgnoringSpaces) 
   EXPECT_THAT(errors, ElementsAre(Pair(2, operatorsError)));
 }
 
+TEST(ValidationTest, sqrtCanAppearAfterAnOpeningBracket) {
+  auto errors = ArithmeticParser::validate("(sqrt4)");
+  EXPECT_THAT(errors, IsEmpty());
+}
+
+TEST(ValidationTest, sqrtCanAppearAfterAnOpeningBracketAndIgnoringSpaces) {
+  auto errors = ArithmeticParser::validate("( sqrt4)");
+  EXPECT_THAT(errors, IsEmpty());
+}
+
 TEST(ValidationTest, emptyBracketsAreReportedAsAnErrorWithTheCorrespondingIndex) {
   auto errors = ArithmeticParser::validate("()");
   auto operatorsError = ArithmeticParser::Errors::NothingBetweenBrackets;
