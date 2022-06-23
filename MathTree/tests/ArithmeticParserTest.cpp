@@ -8,7 +8,7 @@ using ::testing::ElementsAre;
 using ::testing::Pair;
 
 class ArithmeticParserTest: public ::testing::Test {
-  protected:
+protected:
   ArithmeticParser parser;
 };
 

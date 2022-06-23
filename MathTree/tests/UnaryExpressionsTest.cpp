@@ -12,7 +12,7 @@ using MathTree::LogarithmExpression;
 using ::testing::Return;
 
 class UnaryExpressionsTest: public ::testing::Test {
-  protected:
+protected:
   std::unique_ptr<NiceExpressionMock> exprMock = std::make_unique<NiceExpressionMock>();
 };
 

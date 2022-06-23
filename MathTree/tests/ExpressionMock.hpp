@@ -4,7 +4,7 @@
 #include "Expression.hpp"
 
 class ExpressionMock: public MathTree::Expression {
-  public:
+public:
   MOCK_METHOD(double, evaluate, (), (const, override));
   MOCK_METHOD(void, print, (std::ostream&), (const, override));
 

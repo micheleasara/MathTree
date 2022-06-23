@@ -15,7 +15,7 @@ using MathTree::TokenType;
 using ::testing::Return;
 
 class BinaryExpressionsTest: public ::testing::Test {
-  protected:
+protected:
   std::unique_ptr<NiceExpressionMock> leftMock = std::make_unique<NiceExpressionMock>();
   std::unique_ptr<NiceExpressionMock> rightMock = std::make_unique<NiceExpressionMock>();
 };
