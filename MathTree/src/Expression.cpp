@@ -118,4 +118,36 @@ void SquareRootExpression::print(std::ostream& stream) const {
   stream << ")";
 }
 
+
+LogarithmExpression::LogarithmExpression(std::unique_ptr<Expression> innerExpression,
+                                         double base,
+                                         TokenType tokenType):
+                                            m_innerExpression(std::move(innerExpression)),
+                                            m_base(base),
+                                            m_tokenType(tokenType) {
+  if (m_innerExpression == nullptr) {
+    throw std::logic_error("Cannot instantiate a LogarithmExpression with an empty inner expression.");
+  }
+
+  if (std::isnan(base) || std::isinf(base) || base <= 0) {
+    throw std::domain_error("Cannot have a logarithm with base " + std::to_string(base) +
+                            ". The base must be a finite, positive number.");
+  }
+}
+
+double LogarithmExpression::evaluate() const {
+  auto inner = m_innerExpression->evaluate();
+  if (inner <= 0) {
+    throw std::domain_error("Cannot compute the logarithm of " + std::to_string(inner) +
+                            ". The argument must be a positive number.");
+  }
+  return std::log2(inner) / std::log2(m_base);
+}
+
+void LogarithmExpression::print(std::ostream& stream) const {
+  stream << symboliseTokenType(m_tokenType) << "(";
+  m_innerExpression->print(stream);
+  stream << ")";
+}
+
 }

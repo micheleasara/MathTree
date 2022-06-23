@@ -16,6 +16,7 @@ enum class TokenType {
   Caret,
   Number,
   SquareRoot,
+  Log,
   Stop
 };
 
@@ -52,6 +53,8 @@ constexpr std::string_view symboliseTokenType(TokenType type) {
     return "^";
   case TokenType::SquareRoot:
     return "sqrt";
+  case TokenType::Log:
+    return "log";
   default:
     throw std::logic_error("Token without an associated symbol.");
   }

@@ -99,6 +99,20 @@ private:
   TokenType m_tokenType;
 };
 
+class LogarithmExpression: public Expression {
+public:
+  LogarithmExpression(std::unique_ptr<Expression> innerExpression,
+                       double base,
+                       TokenType tokenType);
+  double evaluate() const override;
+  void print(std::ostream& stream) const override;
+
+private:
+  std::unique_ptr<Expression> m_innerExpression;
+  double m_base{0};
+  TokenType m_tokenType;
+};
+
 }
 
 #endif // MATHTREE_EXPRESSION_H
