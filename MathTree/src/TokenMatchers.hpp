@@ -38,6 +38,16 @@ public:
   std::optional<Token> match(std::string_view source, size_t startIdx) const;
 };
 
+class LogarithmMatcher: public TokenMatcher {
+public:
+  LogarithmMatcher();
+  std::optional<Token> match(std::string_view source, size_t startIdx) override;
+  std::optional<Token> match(std::string_view source, size_t startIdx) const;
+private:
+  SymbolMatcher m_symbolMatcher;
+  UnsignedNumberMatcher m_numberMatcher;
+};
+
 }
 
 #endif // MATHTREE_TOKENMATCHERS

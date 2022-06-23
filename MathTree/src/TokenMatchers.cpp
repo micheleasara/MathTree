@@ -57,4 +57,17 @@ std::optional<Token> UnsignedNumberMatcher::match(std::string_view source, size_
   return std::nullopt;
 }
 
+std::optional<Token> LogarithmMatcher::match(std::string_view source, size_t startIdx) const {
+  return static_cast<LogarithmMatcher const&>(*this).match(source, startIdx);
+}
+
+std::optional<Token> LogarithmMatcher::match(std::string_view source, size_t startIdx) {
+  if (auto logOpt = m_symbolMatcher.match(source, startIdx)) {
+    return logOpt;
+  }
+  return std::nullopt;
+}
+
+LogarithmMatcher::LogarithmMatcher(): m_symbolMatcher({TokenType::Log}) {}
+
 }

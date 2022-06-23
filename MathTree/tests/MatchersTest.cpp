@@ -5,6 +5,7 @@
 using ::testing::Property;
 using ::testing::Optional;
 using ::testing::Eq;
+using MathTree::LogarithmMatcher;
 using MathTree::TokenType;
 using MathTree::SymbolMatcher;
 using MathTree::UnsignedNumberMatcher;
@@ -47,4 +48,10 @@ TEST(MatchersTest, unsignedNumberMatcherDoesNotMatchSignedNumbers) {
   UnsignedNumberMatcher matcher;
   EXPECT_EQ(matcher.match("+100", 0), std::nullopt);
   EXPECT_EQ(matcher.match("-100", 0), std::nullopt);
+}
+
+TEST(MatchersTest, logMatcherMatchesLogWithImpliedBase10) {
+  LogarithmMatcher matcher;
+  EXPECT_NE(matcher.match("log100", 0), std::nullopt);
+  EXPECT_NE(matcher.match("log(100)", 0), std::nullopt);
 }
