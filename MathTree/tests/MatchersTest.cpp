@@ -52,6 +52,12 @@ TEST(MatchersTest, unsignedNumberMatcherDoesNotMatchSignedNumbers) {
 
 TEST(MatchersTest, logMatcherMatchesLogWithImpliedBase10) {
   LogarithmMatcher matcher;
-  EXPECT_NE(matcher.match("log100", 0), std::nullopt);
-  EXPECT_NE(matcher.match("log(100)", 0), std::nullopt);
+  EXPECT_THAT(matcher.match("log10", 0), 
+              Optional(Property(&MathTree::Token::text, Eq("log"))));
+}
+
+TEST(MatchersTest, logMatcherMatchesLogWithArbitraryBasePrecededByAnUnderscore) {
+  LogarithmMatcher matcher;
+  EXPECT_THAT(matcher.match("log_3(9)", 0), 
+              Optional(Property(&MathTree::Token::text, Eq("log_3"))));
 }

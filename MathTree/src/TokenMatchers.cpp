@@ -57,13 +57,24 @@ std::optional<Token> UnsignedNumberMatcher::match(std::string_view source, size_
   return std::nullopt;
 }
 
-std::optional<Token> LogarithmMatcher::match(std::string_view source, size_t startIdx) const {
+std::optional<Token> LogarithmMatcher::match(std::string_view source, size_t startIdx) {
   return static_cast<LogarithmMatcher const&>(*this).match(source, startIdx);
 }
 
-std::optional<Token> LogarithmMatcher::match(std::string_view source, size_t startIdx) {
+std::optional<Token> LogarithmMatcher::match(std::string_view source, size_t startIdx) const {
   if (auto logOpt = m_symbolMatcher.match(source, startIdx)) {
-    return logOpt;
+    auto const logSymbolLength = logOpt->text().size();
+    static auto constexpr logDelimeter = delimeterFor(TokenType::Log);
+    if (source.substr(startIdx + logSymbolLength, 1) != logDelimeter) {
+      return logOpt; // implicit base
+    }
+
+    if (auto const baseOpt = m_numberMatcher.match(source,
+                                                   startIdx + logSymbolLength + logDelimeter.size())) {
+      auto logWithBaseLength = logSymbolLength + 1 + baseOpt->text().size();
+      auto logWithBase = std::string(source.substr(startIdx, logWithBaseLength));
+      return Token{TokenType::Log, std::move(logWithBase)};
+    }
   }
   return std::nullopt;
 }

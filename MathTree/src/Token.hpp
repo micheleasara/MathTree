@@ -56,8 +56,15 @@ constexpr std::string_view symboliseTokenType(TokenType type) {
   case TokenType::Log:
     return "log";
   default:
-    throw std::logic_error("Token without an associated symbol.");
+    throw std::logic_error("Token type without an associated symbol.");
   }
+}
+
+constexpr std::string_view delimeterFor(TokenType type) {
+  if (type == TokenType::Log) {
+    return "_";
+  }
+  throw std::logic_error("Token type without an associated delimeter.");
 }
 
 }
