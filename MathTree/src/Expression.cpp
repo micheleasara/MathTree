@@ -145,7 +145,8 @@ double LogarithmExpression::evaluate() const {
 }
 
 void LogarithmExpression::print(std::ostream& stream) const {
-  stream << symboliseTokenType(m_tokenType) << "(";
+  stream << symboliseTokenType(m_tokenType);
+  stream << delimeterFor(TokenType::Log) << m_base << "(";
   m_innerExpression->print(stream);
   stream << ")";
 }
