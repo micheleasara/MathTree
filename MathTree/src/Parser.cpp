@@ -83,11 +83,13 @@ void PrattParser::reset() {
 }
 
 ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view input) {
-  static SymbolMatcher const operatorMatcher({TokenType::Plus, TokenType::Minus,
-                                          TokenType::Slash, TokenType::Asterisk,
-                                          TokenType::Caret, TokenType::SquareRoot});
+  static SymbolMatcher const symbolMatcher({TokenType::Plus, TokenType::Minus,
+                                              TokenType::Slash, TokenType::Asterisk,
+                                              TokenType::Caret, TokenType::SquareRoot});
   static SymbolMatcher const signMatcher({TokenType::Plus, TokenType::Minus});
   static UnsignedNumberMatcher const numberMatcher;
+  // logMatcher is needed as it can match the base as well (so more than just the "log" symbol)
+  static LogarithmMatcher const logMatcher;
   
   if (input.size() <= 0) {
     return IndexErrorPairs{};
@@ -105,7 +107,9 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view in
 
     auto increment = 0;
     std::optional<Token> operatorOpt, numberOpt;
-    if (operatorOpt = operatorMatcher.match(input, i)) {
+    if (operatorOpt = symbolMatcher.match(input, i)) {
+      increment += operatorOpt->text().size() - 1;
+    } else if (operatorOpt = logMatcher.match(input, i)) {
       increment += operatorOpt->text().size() - 1;
     } else if (numberOpt = numberMatcher.match(input, i)) {
       increment += numberOpt->text().size() - 1;
@@ -130,13 +134,14 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view in
         idxErrorPairs.emplace_back(lastNonSpaceIdx, Errors::IncompleteOperation);
       }
     } else if (operatorOpt) {
-      auto isSqrt = operatorOpt->type() == TokenType::SquareRoot;
-      if (isSqrt && !wasOperator && lastNonSpaceIdx != -1 && input[lastNonSpaceIdx] != '(') {
-        // sqrt must be preceded by an operator, or by an opening bracket,
-        // or it must be at the start of the expression
+      auto isSqrtOrLog = operatorOpt->type() == TokenType::SquareRoot ||
+                         operatorOpt->type() == TokenType::Log;
+      if (isSqrtOrLog && !wasOperator && lastNonSpaceIdx != -1 && input[lastNonSpaceIdx] != '(') {
+        // sqrt and log must be preceded by an operator, or by an opening bracket,
+        // or they must be at the start of the expression
         idxErrorPairs.emplace_back(i, Errors::MissingOperator);
       } else if ((wasOperator || lastNonSpaceIdx == -1 || input[lastNonSpaceIdx] == '(') && 
-                                           !isSqrt && !signMatcher.match(operatorOpt->text(), 0)) {
+                                           !isSqrtOrLog && !signMatcher.match(operatorOpt->text(), 0)) {
         // allow expressions like 1+-2, 2++3, sqrtsqrt3, 2-sqrt2 and so on, but disallow
         // other operators from appearing in a row without numbers between them.
         // Also ensure no binary operator is at the start of the expression.

@@ -195,3 +195,45 @@ TEST(ValidationTest, sqrtCanBeCascaded) {
   auto errors = ArithmeticParser::validate("sqrtsqrt4");
   EXPECT_THAT(errors, IsEmpty());
 }
+
+TEST(ValidationTest, logCanBeAtTheBeginningOfAnExpression) {
+  auto errors = ArithmeticParser::validate("log10");
+  EXPECT_THAT(errors, IsEmpty());
+}
+
+TEST(ValidationTest, logCanBeAtTheBeginningOfAnExpressionAndIgnoringSpaces) {
+  auto errors = ArithmeticParser::validate("    log10");
+  EXPECT_THAT(errors, IsEmpty());
+}
+
+TEST(ValidationTest, logCannotBeImmediatelyPrecededByANumber) {
+  auto errors = ArithmeticParser::validate("2log10");
+  auto operatorsError = ArithmeticParser::Errors::MissingOperator;
+  EXPECT_THAT(errors, ElementsAre(Pair(1, operatorsError)));
+}
+
+TEST(ValidationTest, logCannotBeImmediatelyPrecededByANumberAndIgnoringSpaces) {
+  auto errors = ArithmeticParser::validate("2 log10");
+  auto operatorsError = ArithmeticParser::Errors::MissingOperator;
+  EXPECT_THAT(errors, ElementsAre(Pair(2, operatorsError)));
+}
+
+TEST(ValidationTest, logCanAppearAfterAnOpeningBracket) {
+  auto errors = ArithmeticParser::validate("(log10)");
+  EXPECT_THAT(errors, IsEmpty());
+}
+
+TEST(ValidationTest, logCanAppearAfterAnOpeningBracketAndIgnoringSpaces) {
+  auto errors = ArithmeticParser::validate("( log10)");
+  EXPECT_THAT(errors, IsEmpty());
+}
+
+TEST(ValidationTest, canCascadeLogs) {
+  auto errors = ArithmeticParser::validate("loglog_2(2^10)");
+  EXPECT_THAT(errors, IsEmpty());
+}
+
+TEST(ValidationTest, canCascadeLogsWithSpaces) {
+  auto errors = ArithmeticParser::validate("log log_2 (2^10)");
+  EXPECT_THAT(errors, IsEmpty());
+}
