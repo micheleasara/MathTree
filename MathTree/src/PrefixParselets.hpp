@@ -53,6 +53,14 @@ private:
   int m_priority{0};
 };
 
+class LogarithmParselet: public PrefixParselet {
+public:
+  LogarithmParselet(int priority);
+  std::unique_ptr<Expression> parse(PrattParser& parser, Token const& token) override;
+private:
+  int m_priority{0};
+};
+
 }
 
 #endif // MATHTREE_PREFIXPARSELETS

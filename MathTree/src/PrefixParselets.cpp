@@ -2,6 +2,7 @@
 #include "Parser.hpp"
 #include "PrefixParselets.hpp"
 #include <stdexcept>
+#include "Utils.hpp"
 
 namespace MathTree {
 
@@ -35,6 +36,21 @@ PositiveSignParselet::PositiveSignParselet(int priority): m_priority(priority) {
 
 std::unique_ptr<Expression> PositiveSignParselet::parse(PrattParser& parser, Token const&) {
   return parser.parse(m_priority);
+}
+
+LogarithmParselet::LogarithmParselet(int priority): m_priority(priority) {}
+
+std::unique_ptr<Expression> LogarithmParselet::parse(PrattParser& parser, Token const& token) {
+  double base = 10;
+  auto const logSymbol = symboliseTokenType(token.type());
+  if (token.text().size() > logSymbol.size()) {
+    auto const baseStr = token.text().substr(logSymbol.size() +
+                                             delimeterFor(TokenType::Log).size());
+    if (auto baseOpt = Utils::parseFirstDouble(baseStr)) {
+      base = *baseOpt;
+    }
+  }
+  return std::make_unique<LogarithmExpression>(parser.parse(m_priority), base, token.type());
 }
 
 }

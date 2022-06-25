@@ -6,17 +6,30 @@ namespace MathTree {
 
 namespace Utils {
 
-std::optional<double> parseDouble(std::string_view input) {
-  double number = 0;
-
+auto signedFromChars(std::string_view input, double& number,
+                                             std::chars_format format = std::chars_format::fixed) {
   if (input.size() && input.front() == '+') {
     // std::from_chars does not accept '+' outside of the exponent
     input.remove_prefix(1);
   }
 
-  auto [ptr, ec] = std::from_chars(input.data(), input.data() + input.size(), number,
-                    std::chars_format::fixed);
+  return std::from_chars(input.data(), input.data() + input.size(), number, format);
+}
+
+std::optional<double> parseDouble(std::string_view input) {
+  double number = 0;
+  auto [ptr, ec] = signedFromChars(input, number);
   if (ec != std::errc() || ptr != input.end()) {
+    return std::nullopt;
+  }
+
+  return number;
+}
+
+std::optional<double> parseFirstDouble(std::string_view input) {
+  double number = 0;
+  auto ret = signedFromChars(input, number);
+  if (ret.ec != std::errc()) {
     return std::nullopt;
   }
 
