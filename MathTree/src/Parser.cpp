@@ -181,6 +181,8 @@ ArithmeticParser::ArithmeticParser(): m_parser(PrattParser(std::make_unique<Arit
                              std::make_unique<GroupParselet>());
   m_parser.setPrefixParselet(TokenType::SquareRoot,
                              std::make_unique<SquareRootParselet>(static_cast<int>(OperationPriority::SquareRoot)));
+  m_parser.setPrefixParselet(TokenType::Log,
+                             std::make_unique<LogarithmParselet>(static_cast<int>(OperationPriority::Logarithm)));
 
   m_parser.setInfixParselet(TokenType::Plus,
                             std::make_unique<AdditionParselet>(static_cast<int>(OperationPriority::Addition)));

@@ -16,6 +16,7 @@ ArithmeticLexer::ArithmeticLexer(std::string text): m_text(std::move(text)) {
   m_matchers.reserve(2);
   m_matchers.push_back(std::make_unique<SymbolMatcher>(symbolsList));
   m_matchers.push_back(std::make_unique<UnsignedNumberMatcher>());
+  m_matchers.push_back(std::make_unique<LogarithmMatcher>());
 }
 
 Token ArithmeticLexer::next() {

@@ -61,7 +61,8 @@ public:
     Multiplication = 2,
     Division = 2,
     Exponentiation = 3,
-    SquareRoot = 3
+    SquareRoot = 3,
+    Logarithm = 3
   };
 
   static IndexErrorPairs validate(std::string_view input);
