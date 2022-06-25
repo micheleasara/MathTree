@@ -18,7 +18,9 @@ TEST(NumbersTest, printingARealNumberPrintsTheNumberItself) {
 }
 
 TEST(NumbersTest, creatingARealNumberFromAStringWithLettersThrows) {
+  EXPECT_ANY_THROW(RealNumberExpression{"a45"});
   EXPECT_ANY_THROW(RealNumberExpression{"4a5"});
+  EXPECT_ANY_THROW(RealNumberExpression{"45a"});
 }
 
 TEST(NumbersTest, creatingARealNumberFromAStringWithSpacesThrows) {
