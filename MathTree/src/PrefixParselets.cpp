@@ -22,8 +22,7 @@ std::unique_ptr<Expression> GroupParselet::parse(PrattParser& parser, Token cons
 SquareRootParselet::SquareRootParselet(int priority): m_priority(priority) {}
 
 std::unique_ptr<Expression> SquareRootParselet::parse(PrattParser& parser, Token const& token) {
-  auto expression = parser.parse(m_priority - 1); // right associativity requires lower priority
-  return std::make_unique<SquareRootExpression>(std::move(expression), token.type());
+  return std::make_unique<SquareRootExpression>(parser.parse(m_priority), token.type());
 }
 
 NegativeSignParselet::NegativeSignParselet(int priority): m_priority(priority) {}
