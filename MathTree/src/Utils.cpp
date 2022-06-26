@@ -19,7 +19,7 @@ auto signedFromChars(std::string_view input, double& number,
 std::optional<double> parseDouble(std::string_view input) {
   double number = 0;
   auto [ptr, ec] = signedFromChars(input, number);
-  if (ec != std::errc() || ptr != input.end()) {
+  if (ec != std::errc() || ptr != input.data() + input.size()) {
     return std::nullopt;
   }
 
