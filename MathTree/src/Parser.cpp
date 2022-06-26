@@ -22,7 +22,7 @@ private:
 PrattParser::PrattParser(std::unique_ptr<Lexer> lexer): m_lexer(std::move(lexer)) {}
 
 std::unique_ptr<Expression> PrattParser::parse() {
-  return parse(std::numeric_limits<int>::min());
+  return parse(minAllowedPriority);
 }
 
 std::unique_ptr<Expression> PrattParser::parse(int priority) {
@@ -64,7 +64,7 @@ Token PrattParser::consumeCurrentToken() {
 
 int PrattParser::infixPriorityFor(Token const& token) {
   if (m_infixParselets.count(token.type()) <= 0) {
-    return std::numeric_limits<int>::min();
+    return minAllowedPriority;
   }
   InfixParselet const& infix = *m_infixParselets[token.type()];
   return infix.priority();

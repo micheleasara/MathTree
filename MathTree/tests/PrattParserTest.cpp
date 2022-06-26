@@ -16,6 +16,7 @@ using ::testing::InSequence;
 using MathTree::Expression;
 using MathTree::Token;
 using MathTree::PrattParser;
+using MathTree::AbstractPrattParser;
 using MathTree::TokenType;
 
 class LexerMock: public MathTree::Lexer {
@@ -28,14 +29,14 @@ using NiceLexerMock = NiceMock<LexerMock>;
 
 class PrefixParseletMock: public MathTree::PrefixParselet {
 public:
-  MOCK_METHOD(std::unique_ptr<Expression>, parse, (PrattParser&, Token const&), ());
+  MOCK_METHOD(std::unique_ptr<Expression>, parse, (AbstractPrattParser&, Token const&), ());
 };
 using NicePrefixParseletMock = NiceMock<PrefixParseletMock>;
 
 class InfixParseletMock: public MathTree::InfixParselet {
 public:
   MOCK_METHOD(std::unique_ptr<Expression>, 
-                  parse, (PrattParser&, std::unique_ptr<Expression> left, Token const&), ());
+                  parse, (AbstractPrattParser&, std::unique_ptr<Expression> left, Token const&), ());
   MOCK_METHOD(int, priority, (), (const));
 };
 using NiceInfixParseletMock = NiceMock<InfixParseletMock>;

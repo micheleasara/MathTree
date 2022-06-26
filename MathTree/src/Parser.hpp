@@ -13,19 +13,31 @@
 
 namespace MathTree {
 
-class PrattParser {
+class AbstractPrattParser {
 public:
+  virtual std::unique_ptr<Expression> parse() = 0;
+  virtual std::unique_ptr<Expression> parse(int priority) = 0;
+  virtual Token consumeCurrentToken() = 0;
+  
+  AbstractPrattParser& operator=(AbstractPrattParser const&) = delete;
+  AbstractPrattParser& operator=(AbstractPrattParser&&) = delete;
+  virtual ~AbstractPrattParser() = default;
+};
+
+class PrattParser: public AbstractPrattParser {
+public:
+  static auto constexpr minAllowedPriority = std::numeric_limits<int>::min();
   PrattParser(std::unique_ptr<Lexer> lexer);
 
-  std::unique_ptr<Expression> parse();
-  std::unique_ptr<Expression> parse(int priority);
+  std::unique_ptr<Expression> parse() override;
+  std::unique_ptr<Expression> parse(int priority) override;
   std::unique_ptr<Expression> parse(std::string input,
-                                    int priority = std::numeric_limits<int>::min());
+                                    int priority = minAllowedPriority);
 
   void setPrefixParselet(TokenType token, std::unique_ptr<PrefixParselet> parselet);
   void setInfixParselet(TokenType token, std::unique_ptr<InfixParselet> parselet);
 
-  Token consumeCurrentToken();
+  Token consumeCurrentToken() override;
   
 private:
   class ReferenceCountingResetter;

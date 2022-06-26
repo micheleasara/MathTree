@@ -6,11 +6,11 @@
 #include "Token.hpp"
 
 namespace MathTree {
-class PrattParser;
+class AbstractPrattParser;
 
 class InfixParselet {
 public:
-  virtual std::unique_ptr<Expression> parse(PrattParser& parser,
+  virtual std::unique_ptr<Expression> parse(AbstractPrattParser& parser,
                                             std::unique_ptr<Expression> left,
                                             Token const& token) = 0;
   virtual int priority() const = 0;
@@ -33,7 +33,7 @@ private:
 class AdditionParselet: public BinaryOperatorParselet {
 public:
   using BinaryOperatorParselet::BinaryOperatorParselet;
-  std::unique_ptr<Expression> parse(PrattParser& parser,
+  std::unique_ptr<Expression> parse(AbstractPrattParser& parser,
                                     std::unique_ptr<Expression> left,
                                     Token const& token) override;
 };
@@ -41,7 +41,7 @@ public:
 class SubtractionParselet: public BinaryOperatorParselet {
 public:
   using BinaryOperatorParselet::BinaryOperatorParselet;
-  std::unique_ptr<Expression> parse(PrattParser& parser,
+  std::unique_ptr<Expression> parse(AbstractPrattParser& parser,
                                     std::unique_ptr<Expression> left,
                                     Token const& token) override;
 };
@@ -49,7 +49,7 @@ public:
 class MultiplicationParselet: public BinaryOperatorParselet {
 public:
   using BinaryOperatorParselet::BinaryOperatorParselet;
-  std::unique_ptr<Expression> parse(PrattParser& parser,
+  std::unique_ptr<Expression> parse(AbstractPrattParser& parser,
                                     std::unique_ptr<Expression> left,
                                     Token const& token) override;
 };
@@ -57,7 +57,7 @@ public:
 class DivisionParselet: public BinaryOperatorParselet {
 public:
   using BinaryOperatorParselet::BinaryOperatorParselet;
-  std::unique_ptr<Expression> parse(PrattParser& parser,
+  std::unique_ptr<Expression> parse(AbstractPrattParser& parser,
                                     std::unique_ptr<Expression> left,
                                     Token const& token) override;
 };
@@ -65,7 +65,7 @@ public:
 class ExponentiationParselet: public BinaryOperatorParselet {
 public:
   using BinaryOperatorParselet::BinaryOperatorParselet;
-  std::unique_ptr<Expression> parse(PrattParser& parser,
+  std::unique_ptr<Expression> parse(AbstractPrattParser& parser,
                                     std::unique_ptr<Expression> left,
                                     Token const& token) override;
 };
