@@ -21,17 +21,13 @@ add_executable(ArithmeticParserTest ArithmeticParserTest.cpp)
 target_link_libraries(ArithmeticParserTest ${TestingLibs})
 gtest_discover_tests(ArithmeticParserTest)
 
-add_executable(RealNumberTest RealNumberTest.cpp)
-target_link_libraries(RealNumberTest ${TestingLibs})
-gtest_discover_tests(RealNumberTest)
-
 add_executable(BinaryExpressionsTest BinaryExpressionsTest.cpp)
 target_link_libraries(BinaryExpressionsTest ${TestingLibs})
 gtest_discover_tests(BinaryExpressionsTest)
 
-add_executable(ValidationTest ValidationTest.cpp)
-target_link_libraries(ValidationTest ${TestingLibs})
-gtest_discover_tests(ValidationTest)
+add_executable(InfixParseletsTest InfixParseletsTest.cpp)
+target_link_libraries(InfixParseletsTest ${TestingLibs})
+gtest_discover_tests(InfixParseletsTest)
 
 add_executable(MatchersTest MatchersTest.cpp)
 target_link_libraries(MatchersTest ${TestingLibs})
@@ -41,6 +37,14 @@ add_executable(PrattParserTest PrattParserTest.cpp)
 target_link_libraries(PrattParserTest ${TestingLibs})
 gtest_discover_tests(PrattParserTest)
 
+add_executable(RealNumberTest RealNumberTest.cpp)
+target_link_libraries(RealNumberTest ${TestingLibs})
+gtest_discover_tests(RealNumberTest)
+
 add_executable(UnaryExpressionsTest UnaryExpressionsTest.cpp)
 target_link_libraries(UnaryExpressionsTest ${TestingLibs})
 gtest_discover_tests(UnaryExpressionsTest)
+
+add_executable(ValidationTest ValidationTest.cpp)
+target_link_libraries(ValidationTest ${TestingLibs})
+gtest_discover_tests(ValidationTest)
