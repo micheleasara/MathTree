@@ -107,3 +107,15 @@ TEST_F(ArithmeticParserTest, canParseTwoSquareRoots) {
     ASSERT_NE(result, nullptr);
     EXPECT_DOUBLE_EQ(result->evaluate(), 2.0);
 }
+
+TEST_F(ArithmeticParserTest, sqrtWithoutParenthesesHasTheSamePriorityAsExponentiation) {
+    auto result = parser.parse("sqrt2 ^ 0");
+    ASSERT_NE(result, nullptr);
+    EXPECT_DOUBLE_EQ(result->evaluate(), 1.0);
+}
+
+TEST_F(ArithmeticParserTest, logWithoutParenthesesHasTheSamePriorityAsExponentiation) {
+    auto result = parser.parse("log100 ^ 0");
+    ASSERT_NE(result, nullptr);
+    EXPECT_DOUBLE_EQ(result->evaluate(), 1.0);
+}
