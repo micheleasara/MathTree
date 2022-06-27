@@ -40,7 +40,7 @@ std::unique_ptr<Expression> PositiveSignParselet::parse(AbstractPrattParser& par
 LogarithmParselet::LogarithmParselet(int priority): m_priority(priority) {}
 
 std::unique_ptr<Expression> LogarithmParselet::parse(AbstractPrattParser& parser, Token const& token) {
-  double base = 10;
+  double base = 10.0;
   auto const logSymbol = symboliseTokenType(token.type());
   if (token.text().size() > logSymbol.size()) {
     auto const baseStr = token.text().substr(logSymbol.size() +
