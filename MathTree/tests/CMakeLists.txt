@@ -37,6 +37,10 @@ add_executable(PrattParserTest PrattParserTest.cpp)
 target_link_libraries(PrattParserTest ${TestingLibs})
 gtest_discover_tests(PrattParserTest)
 
+add_executable(PrefixParseletsTest PrefixParseletsTest.cpp)
+target_link_libraries(PrefixParseletsTest ${TestingLibs})
+gtest_discover_tests(PrefixParseletsTest)
+
 add_executable(RealNumberTest RealNumberTest.cpp)
 target_link_libraries(RealNumberTest ${TestingLibs})
 gtest_discover_tests(RealNumberTest)
