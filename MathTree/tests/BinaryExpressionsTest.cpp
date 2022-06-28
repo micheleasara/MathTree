@@ -5,19 +5,30 @@
 #include <iostream>
 #include "Token.hpp"
 
-using MathTree::Expression;
+using ::testing::Return;
+
 using MathTree::AdditionExpression;
+using MathTree::BinaryExpression;
 using MathTree::DivisionExpression;
-using MathTree::MultiplicationExpression;
 using MathTree::ExponentiationExpression;
+using MathTree::Expression;
+using MathTree::MultiplicationExpression;
 using MathTree::TokenType;
 
-using ::testing::Return;
 
 class BinaryExpressionsTest: public ::testing::Test {
 protected:
   std::unique_ptr<NiceExpressionMock> leftMock = std::make_unique<NiceExpressionMock>();
   std::unique_ptr<NiceExpressionMock> rightMock = std::make_unique<NiceExpressionMock>();
+};
+
+class BinaryExpressionStub: public BinaryExpression {
+public:
+  using BinaryExpression::BinaryExpression;
+  double evaluate() const {
+    return 0.0;
+  }
+  void print(std::ostream&) {}
 };
 
 TEST_F(BinaryExpressionsTest, evaluatingAnAdditionReturnsTheSumOfTheValuesOfBothAddends) {
@@ -81,4 +92,13 @@ TEST_F(BinaryExpressionsTest, evaluatingAPowerReturnsTheBaseRaisedToTheExponent)
 
   ExponentiationExpression power{std::move(leftMock), TokenType::Caret, std::move(rightMock)};
   EXPECT_DOUBLE_EQ(power.evaluate(), 8.0);
+}
+
+TEST_F(BinaryExpressionsTest, aBinaryExpressionThrowsIfConstructedWithEitherArgumentNull) {
+  EXPECT_ANY_THROW(BinaryExpressionStub binary(nullptr, TokenType::Asterisk, std::move(rightMock)));
+  EXPECT_ANY_THROW(BinaryExpressionStub binary(std::move(leftMock), TokenType::Asterisk, nullptr));
+}
+
+TEST_F(BinaryExpressionsTest, aBinaryExpressionThrowsIfConstructedWithBothArgumentsNull) {
+  EXPECT_ANY_THROW(BinaryExpressionStub binary(nullptr, TokenType::Asterisk, nullptr));
 }

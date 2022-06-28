@@ -17,7 +17,11 @@ namespace MathTree {
 BinaryExpression::BinaryExpression(std::unique_ptr<Expression> left,
                                    TokenType tokenType,
                                    std::unique_ptr<Expression> right):
-                                      m_left(std::move(left)), m_right(std::move(right)), m_tokenType(tokenType) {}
+                                      m_left(std::move(left)), m_right(std::move(right)), m_tokenType(tokenType) {
+  if (m_left == nullptr || m_right == nullptr) {
+    throw std::logic_error("A binary expression cannot be constructed if one or more of its subexpressions are null.");
+  }
+}
 
 void BinaryExpression::print(std::ostream& stream) const {
   stream << '(';
