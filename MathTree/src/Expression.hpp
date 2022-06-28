@@ -13,6 +13,7 @@ class Expression {
 public:
   virtual double evaluate() const = 0;
   virtual void print(std::ostream& stream) const = 0;
+  virtual std::vector<Expression const*> subexpressions() const = 0;
 
   Expression& operator=(Expression const&) = delete;
   Expression& operator=(Expression&&) = delete;
@@ -28,6 +29,7 @@ public:
   void print(std::ostream& stream) const override;
   Expression const& left() const;
   Expression const& right() const;
+  std::vector<Expression const*> subexpressions() const override;
 
 private:
   std::unique_ptr<Expression> m_left;
@@ -71,6 +73,7 @@ public:
   NegativeSignExpression(TokenType operatorToken, std::unique_ptr<Expression> right);
   void print(std::ostream& stream) const override;
   double evaluate() const override;
+  std::vector<Expression const*> subexpressions() const override;
 
 private:
   TokenType m_operator;
@@ -82,6 +85,7 @@ public:
   RealNumberExpression(std::string_view num);
   double evaluate() const override;
   void print(std::ostream& stream) const override;
+  std::vector<Expression const*> subexpressions() const override;
 
 private:
   double m_value{0};
@@ -93,6 +97,7 @@ public:
                        TokenType tokenType);
   double evaluate() const override;
   void print(std::ostream& stream) const override;
+  std::vector<Expression const*> subexpressions() const override;
 
 private:
   std::unique_ptr<Expression> m_innerExpression;
@@ -106,6 +111,7 @@ public:
                        TokenType tokenType);
   double evaluate() const override;
   void print(std::ostream& stream) const override;
+  std::vector<Expression const*> subexpressions() const override;
 
 private:
   std::unique_ptr<Expression> m_innerExpression;

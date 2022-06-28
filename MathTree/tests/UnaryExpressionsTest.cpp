@@ -1,15 +1,18 @@
-#include <gtest/gtest.h>
 #include "Expression.hpp"
 #include "ExpressionMock.hpp"
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 #include <limits>
 #include <memory>
 
+using ::testing::ElementsAreArray;
+using ::testing::Return;
+
+using MathTree::LogarithmExpression;
+using MathTree::NegativeSignExpression;
 using MathTree::RealNumberExpression;
 using MathTree::SquareRootExpression;
-using MathTree::NegativeSignExpression;
 using MathTree::TokenType;
-using MathTree::LogarithmExpression;
-using ::testing::Return;
 
 class UnaryExpressionsTest: public ::testing::Test {
 protected:
@@ -20,6 +23,12 @@ TEST_F(UnaryExpressionsTest, evaluatingASquareRootOfANegativeNumberThrows) {
   EXPECT_CALL(*exprMock, evaluate).WillOnce(Return(-1));
   SquareRootExpression sqrt(std::move(exprMock), TokenType::SquareRoot);
   EXPECT_ANY_THROW(sqrt.evaluate());
+}
+
+TEST_F(UnaryExpressionsTest, aSquareRootReturnsTheRadicandAsItsOnlySubexpression) {
+  auto exprMockPtr = exprMock.get();
+  SquareRootExpression sqrt(std::move(exprMock), TokenType::SquareRoot);
+  EXPECT_THAT(sqrt.subexpressions(), ElementsAreArray({exprMockPtr}));
 }
 
 TEST_F(UnaryExpressionsTest, evaluatingASquareRootReturnsTheSquareRootOfItsRadicand) {
@@ -38,6 +47,12 @@ TEST_F(UnaryExpressionsTest, evaluatingTheNegationOfANegativeNumberReturnsAPosit
   EXPECT_CALL(*exprMock, evaluate).WillOnce(Return(-42));
   NegativeSignExpression plusFortyTwo(TokenType::Minus, std::move(exprMock));
   EXPECT_DOUBLE_EQ(plusFortyTwo.evaluate(), 42.0);
+}
+
+TEST_F(UnaryExpressionsTest, aNegationReturnsItsArgumentAsItsOnlySubexpression) {
+  auto exprMockPtr = exprMock.get();
+  NegativeSignExpression negation(TokenType::Minus, std::move(exprMock));
+  EXPECT_THAT(negation.subexpressions(), ElementsAreArray({exprMockPtr}));
 }
 
 TEST_F(UnaryExpressionsTest, constructingALogarithmWithNonPositiveOrInfiniteBaseThrows) {
@@ -86,4 +101,10 @@ TEST_F(UnaryExpressionsTest, canComputeLogWithArbitraryBases) {
   EXPECT_CALL(*exprMock, evaluate).WillOnce(Return(42.0 * 42.0 * 42.0));
   LogarithmExpression logarithm(std::move(exprMock), 42.0, TokenType::Log);
   EXPECT_DOUBLE_EQ(logarithm.evaluate(), 3.0);
+}
+
+TEST_F(UnaryExpressionsTest, aLogarithmReturnsItsArgumentAsItsOnlySubexpression) {
+  auto exprMockPtr = exprMock.get();
+  LogarithmExpression logarithm(std::move(exprMock), 10.0, TokenType::Log);
+  EXPECT_THAT(logarithm.subexpressions(), ElementsAreArray({exprMockPtr}));
 }

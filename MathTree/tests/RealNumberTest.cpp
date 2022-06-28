@@ -1,7 +1,9 @@
 #include <cmath>
 #include "Expression.hpp"
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
+using ::testing::IsEmpty;
 using MathTree::RealNumberExpression;
 
 TEST(NumbersTest, evaluatingARealNumberReturnsTheNumberItself) {
@@ -43,4 +45,9 @@ TEST(NumbersTest, creatingARealNumberUsingScientificNotationThrows) {
 TEST(NumbersTest, creatingARealNumberUsingHexadecimalThrows) {
   EXPECT_ANY_THROW(RealNumberExpression{"0x1"});
   EXPECT_ANY_THROW(RealNumberExpression{"0X1"});
+}
+
+TEST(NumbersTest, aRealNumberHasNoSubexpressions) {
+  RealNumberExpression numberTen("10");
+  EXPECT_THAT(numberTen.subexpressions(), IsEmpty());
 }

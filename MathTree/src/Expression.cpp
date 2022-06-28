@@ -38,6 +38,10 @@ Expression const& BinaryExpression::right() const {
   return *m_right;
 }
 
+std::vector<Expression const*> BinaryExpression::subexpressions() const {
+  return {m_left.get(), m_right.get()};
+}
+
 NegativeSignExpression::NegativeSignExpression(TokenType operatorToken, std::unique_ptr<Expression> right) {
   m_operator = operatorToken;
   m_right = std::move(right);
@@ -53,6 +57,10 @@ double NegativeSignExpression::evaluate() const {
   return -(m_right->evaluate());
 }
 
+std::vector<Expression const*> NegativeSignExpression::subexpressions() const {
+  return {m_right.get()};
+}
+
 RealNumberExpression::RealNumberExpression(std::string_view num) {
   auto numberOpt = Utils::parseDouble(num);
   if (!numberOpt.has_value() || std::isinf(*numberOpt) || std::isnan(*numberOpt)) {
@@ -60,6 +68,11 @@ RealNumberExpression::RealNumberExpression(std::string_view num) {
   }
   m_value = *numberOpt;
 }
+
+std::vector<Expression const*> RealNumberExpression::subexpressions() const {
+  return {};
+}
+
 
 void RealNumberExpression::print(std::ostream& stream) const {
   stream << m_value;
@@ -122,6 +135,9 @@ void SquareRootExpression::print(std::ostream& stream) const {
   stream << ")";
 }
 
+std::vector<Expression const*> SquareRootExpression::subexpressions() const {
+  return {m_innerExpression.get()};
+}
 
 LogarithmExpression::LogarithmExpression(std::unique_ptr<Expression> innerExpression,
                                          double base,
@@ -154,5 +170,10 @@ void LogarithmExpression::print(std::ostream& stream) const {
   m_innerExpression->print(stream);
   stream << ")";
 }
+
+std::vector<Expression const*> LogarithmExpression::subexpressions() const {
+  return {m_innerExpression.get()};
+}
+
 
 }

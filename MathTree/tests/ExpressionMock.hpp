@@ -7,7 +7,7 @@ class ExpressionMock: public MathTree::Expression {
 public:
   MOCK_METHOD(double, evaluate, (), (const, override));
   MOCK_METHOD(void, print, (std::ostream&), (const, override));
-
+  MOCK_METHOD(std::vector<Expression const*>, subexpressions, (), (const, override));
 };
 using NiceExpressionMock = ::testing::NiceMock<ExpressionMock>;
 

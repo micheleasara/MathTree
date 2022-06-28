@@ -6,7 +6,7 @@
 #include "Token.hpp"
 
 using ::testing::Return;
-
+using ::testing::ElementsAreArray;
 using MathTree::AdditionExpression;
 using MathTree::BinaryExpression;
 using MathTree::DivisionExpression;
@@ -101,4 +101,11 @@ TEST_F(BinaryExpressionsTest, aBinaryExpressionThrowsIfConstructedWithEitherArgu
 
 TEST_F(BinaryExpressionsTest, aBinaryExpressionThrowsIfConstructedWithBothArgumentsNull) {
   EXPECT_ANY_THROW(BinaryExpressionStub binary(nullptr, TokenType::Asterisk, nullptr));
+}
+
+TEST_F(BinaryExpressionsTest, aBinaryExpressionReturnsTheTwoSubexpressionsUsedToConstructItOrderedLeftToRight) {
+  auto leftMockPtr = leftMock.get();
+  auto rightMockPtr = rightMock.get();
+  BinaryExpressionStub binary(std::move(leftMock), TokenType::Asterisk, std::move(rightMock));
+  EXPECT_THAT(binary.subexpressions(), ElementsAreArray({leftMockPtr, rightMockPtr}));
 }
