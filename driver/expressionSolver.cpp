@@ -22,7 +22,7 @@ int main() {
 
     auto idxErrorPairs = ArithmeticParser::validate(input);
     std::sort(idxErrorPairs.begin(), idxErrorPairs.end(), [](auto const& leftPair, 
-                                 auto const& rightPair) {
+                                                             auto const& rightPair) {
       return leftPair.first < rightPair.first;
     });
     for (auto const& [idx, error]: idxErrorPairs) {
@@ -35,9 +35,7 @@ int main() {
 
     try {
       auto expression = parser.parse(std::move(input));
-      std::cout << "Expression parsed as ";
-      expression->print(std::cout);
-      std::cout << "\n";
+      std::cout << "Expression parsed as " << *expression << "\n";
       auto result = expression->evaluate();
       std::cout << "Result is " << result;
     } catch (std::logic_error const& ex) {

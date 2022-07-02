@@ -19,6 +19,7 @@ public:
   Expression& operator=(Expression&&) = delete;
   virtual ~Expression() = default;
 };
+std::ostream& operator<<(std::ostream& left, Expression const& right);
 
 class BinaryExpression: public Expression {
 public:

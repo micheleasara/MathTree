@@ -14,6 +14,11 @@
 #include <vector>
 
 namespace MathTree {
+std::ostream& operator<<(std::ostream& left, Expression const& right) {
+  right.print(left);
+  return left;
+}
+
 BinaryExpression::BinaryExpression(std::unique_ptr<Expression> left,
                                    TokenType tokenType,
                                    std::unique_ptr<Expression> right):
@@ -24,11 +29,9 @@ BinaryExpression::BinaryExpression(std::unique_ptr<Expression> left,
 }
 
 void BinaryExpression::print(std::ostream& stream) const {
-  stream << '(';
-  left().print(stream);
-  stream << ' ' << symboliseTokenType(m_tokenType) << ' ';
-  right().print(stream);
-  stream << ')';
+  stream << '(' << left() << ' ';
+  stream << symboliseTokenType(m_tokenType) << ' ';
+  stream << right() << ')';
 }
 
 Expression const& BinaryExpression::left() const {
@@ -49,8 +52,7 @@ NegativeSignExpression::NegativeSignExpression(TokenType operatorToken, std::uni
 
 void NegativeSignExpression::print(std::ostream& stream) const {
   stream << "(" << symboliseTokenType(m_operator);
-  m_right->print(stream);
-  stream << ")";
+  stream << *m_right << ")";
 }
 
 double NegativeSignExpression::evaluate() const {
@@ -131,8 +133,7 @@ double SquareRootExpression::evaluate() const {
 
 void SquareRootExpression::print(std::ostream& stream) const {
   stream << symboliseTokenType(m_tokenType) << "(";
-  m_innerExpression->print(stream);
-  stream << ")";
+  stream << *m_innerExpression << ")";
 }
 
 std::vector<Expression const*> SquareRootExpression::subexpressions() const {
@@ -167,8 +168,7 @@ double LogarithmExpression::evaluate() const {
 void LogarithmExpression::print(std::ostream& stream) const {
   stream << symboliseTokenType(m_tokenType);
   stream << delimeterFor(TokenType::Log) << m_base << "(";
-  m_innerExpression->print(stream);
-  stream << ")";
+  stream << *m_innerExpression << ")";
 }
 
 std::vector<Expression const*> LogarithmExpression::subexpressions() const {
