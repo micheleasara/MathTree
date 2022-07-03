@@ -1,7 +1,7 @@
 #include "Expression.hpp"
 #include "ExpressionMock.hpp"
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
+#include "gmock/gmock.h"
+#include "gtest/gtest.h"
 #include <limits>
 #include <memory>
 

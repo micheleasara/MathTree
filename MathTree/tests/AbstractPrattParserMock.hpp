@@ -2,7 +2,7 @@
 #define MATHTREE_ABSTRACT_PARSER_MOCK_H
 
 #include "Expression.hpp"
-#include <gmock/gmock.h>
+#include "gmock/gmock.h"
 #include "Parser.hpp"
 #include "Token.hpp"
 

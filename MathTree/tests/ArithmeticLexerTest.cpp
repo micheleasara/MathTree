@@ -1,6 +1,6 @@
 #include "Lexer.hpp"
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#include "gtest/gtest.h"
+#include "gmock/gmock.h"
 
 using ::testing::Property;
 using ::testing::Eq;

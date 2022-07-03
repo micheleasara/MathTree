@@ -1,6 +1,6 @@
 #ifndef MATHTREE_EXPRESSIONMOCK
 #define MATHTREE_EXPRESSIONMOCK
-#include <gmock/gmock.h>
+#include "gmock/gmock.h"
 #include "Expression.hpp"
 
 class ExpressionMock: public MathTree::Expression {
