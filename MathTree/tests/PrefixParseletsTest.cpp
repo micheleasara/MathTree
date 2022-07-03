@@ -1,11 +1,16 @@
 #include "AbstractPrattParserMock.hpp"
+#include "Expression.hpp"
+#include "ExpressionMock.hpp"
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
+#include <memory>
 #include "Token.hpp"
 
+using ::testing::ByMove;
 using ::testing::Return;
 
 using MathTree::GroupParselet;
+using MathTree::LogarithmParselet;
 using MathTree::NegativeSignParselet;
 using MathTree::SquareRootParselet;
 using MathTree::Token;
@@ -46,7 +51,10 @@ TEST_F(PrefixParseletsTest, negativeSignParseletAsksForItsArgumentByParsingWithT
 
 TEST_F(PrefixParseletsTest, logarithmParseletAsksForItsArgumentByParsingWithThePriorityUsedForItsConstruction) {
   int priority = 1;
-  NegativeSignParselet negation(priority);
-  EXPECT_CALL(parserMock, parse(priority));
-  negation.parse(parserMock, Token{TokenType::Log, "log"});
+  LogarithmParselet logarithm(priority);
+  EXPECT_CALL(parserMock, parse(priority)).WillOnce(
+                                               Return(ByMove(std::make_unique<ExpressionMock>())));
+  logarithm.parse(parserMock, Token{TokenType::Log, "log"});
+}
+
 }
