@@ -10,13 +10,17 @@
 #include <vector>
 
 void printError(size_t idx, MathTree::ArithmeticParser::Errors error);
+bool userWantsToContinue();
 
 int main() {
   using namespace MathTree;
   ArithmeticParser parser;
 
-  while(true) {
+  do {
     std::string input;
+    std::cout << "Parentheses and the following operators are supported:\n";
+    std::cout << "+ (addition), - (subtraction), * (multiplication), / (division)\n";
+    std::cout << "^ (exponentiation), sqrt (square root), log (logarithm base 10) and log_n (logarithm base n).\n\n";
     std::cout << "Enter an expression:\n";
     std::getline(std::cin, input);
 
@@ -41,8 +45,8 @@ int main() {
     } catch (std::logic_error const& ex) {
       std::cerr << "Logic error. " << ex.what();
     }
-    std::cout << "\n" << std::endl;
-  }
+    std::cout << "\n\n";
+  } while (userWantsToContinue());
 
   return 0;
 }
@@ -65,4 +69,18 @@ void printError(size_t idx, MathTree::ArithmeticParser::Errors error) {
     default:
       std::cerr << "Unknown error at index " << idx << ".\n"; break;
   }
+}
+
+bool userWantsToContinue() {
+  std::string input;
+  do {
+    std::cout << "Continue? (y/n)\n";
+    std::getline(std::cin, input);
+  } while (input != "y" && input != "n");
+  
+  auto wantsToContinue = input == "y";
+  if (wantsToContinue) {
+    std::cout << "\n";
+  }
+  return wantsToContinue;
 }
