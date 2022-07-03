@@ -56,7 +56,12 @@ void NegativeSignExpression::print(std::ostream& stream) const {
 }
 
 double NegativeSignExpression::evaluate() const {
-  return -(m_right->evaluate());
+  if (m_cache.has_value()) {
+    return *m_cache;
+  }
+
+  m_cache = -(m_right->evaluate());
+  return *m_cache;
 }
 
 std::vector<Expression const*> NegativeSignExpression::subexpressions() const {
@@ -75,7 +80,6 @@ std::vector<Expression const*> RealNumberExpression::subexpressions() const {
   return {};
 }
 
-
 void RealNumberExpression::print(std::ostream& stream) const {
   stream << m_value;
 }
@@ -85,26 +89,50 @@ double RealNumberExpression::evaluate() const {
 }
 
 double AdditionExpression::evaluate() const {
-  return left().evaluate() + right().evaluate();
+  if (m_cache.has_value()) {
+    return *m_cache;
+  }
+
+  m_cache = left().evaluate() + right().evaluate();
+  return *m_cache;
 }
 
 double SubtractionExpression::evaluate() const {
-  return left().evaluate() - right().evaluate();
+  if (m_cache.has_value()) {
+    return *m_cache;
+  }
+
+  m_cache = left().evaluate() - right().evaluate();
+  return *m_cache;
 }
 
 double MultiplicationExpression::evaluate() const {
-  return left().evaluate() * right().evaluate();
+  if (m_cache.has_value()) {
+    return *m_cache;
+  }
+
+  m_cache = left().evaluate() * right().evaluate();
+  return *m_cache;
 }
 
 double DivisionExpression::evaluate() const {
+  if (m_cache.has_value()) {
+    return *m_cache;
+  }
+
   auto divisor = right().evaluate();
   if (divisor == 0.0) {
     throw std::domain_error("Detected a divide-by-zero operation.");
   }
-  return left().evaluate() / divisor;
+  m_cache = left().evaluate() / divisor;
+  return *m_cache;
 }
 
 double ExponentiationExpression::evaluate() const {
+  if (m_cache.has_value()) {
+    return *m_cache;
+  }
+
   auto leftEval = left().evaluate();
   auto rightEval = right().evaluate();
   if ((leftEval == 0.0 && rightEval <= 0.0) ||
@@ -115,7 +143,8 @@ double ExponentiationExpression::evaluate() const {
     throw std::domain_error("Cannot compute " + std::to_string(leftEval) +
                            " to the power of " + std::to_string(rightEval) + ".");
   }
-  return std::pow(leftEval, rightEval);
+  m_cache = std::pow(leftEval, rightEval);
+  return *m_cache;
 }
 
 SquareRootExpression::SquareRootExpression(std::unique_ptr<Expression> innerExpression, 
@@ -124,11 +153,16 @@ SquareRootExpression::SquareRootExpression(std::unique_ptr<Expression> innerExpr
                                             m_tokenType(tokenType) {}
 
 double SquareRootExpression::evaluate() const {
+  if (m_cache.has_value()) {
+    return *m_cache;
+  }
+
   auto innerResult = m_innerExpression->evaluate();
   if (innerResult < 0 || std::isinf(innerResult) || std::isnan(innerResult)) {
     throw std::domain_error("Cannot compute the square root of " + std::to_string(innerResult) + ".");
   }
-  return std::sqrt(innerResult);
+  m_cache = std::sqrt(innerResult);
+  return *m_cache;
 }
 
 void SquareRootExpression::print(std::ostream& stream) const {
@@ -157,12 +191,17 @@ LogarithmExpression::LogarithmExpression(std::unique_ptr<Expression> innerExpres
 }
 
 double LogarithmExpression::evaluate() const {
+  if (m_cache.has_value()) {
+    return *m_cache;
+  }
+
   auto inner = m_innerExpression->evaluate();
   if (inner <= 0) {
     throw std::domain_error("Cannot compute the logarithm of " + std::to_string(inner) +
                             ". The argument must be a positive number.");
   }
-  return std::log2(inner) / std::log2(m_base);
+  m_cache = std::log2(inner) / std::log2(m_base);
+  return *m_cache;
 }
 
 void LogarithmExpression::print(std::ostream& stream) const {
@@ -174,6 +213,5 @@ void LogarithmExpression::print(std::ostream& stream) const {
 std::vector<Expression const*> LogarithmExpression::subexpressions() const {
   return {m_innerExpression.get()};
 }
-
 
 }

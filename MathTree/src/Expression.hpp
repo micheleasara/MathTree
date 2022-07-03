@@ -2,6 +2,7 @@
 #define MATHTREE_EXPRESSION_H
 
 #include <memory>
+#include <optional>
 #include <string_view>
 #include "Token.hpp"
 #include <utility>
@@ -43,30 +44,40 @@ class AdditionExpression: public BinaryExpression {
 public:
   using BinaryExpression::BinaryExpression;
   double evaluate() const override;
+private:
+  mutable std::optional<double> m_cache;
 };
 
 class SubtractionExpression: public BinaryExpression {
 public:
   using BinaryExpression::BinaryExpression;
   double evaluate() const override;
+private:
+  mutable std::optional<double> m_cache;
 };
 
 class MultiplicationExpression: public BinaryExpression {
 public:
   using BinaryExpression::BinaryExpression;
   double evaluate() const override;
+private:
+  mutable std::optional<double> m_cache;
 };
 
 class DivisionExpression: public BinaryExpression {
 public:
   using BinaryExpression::BinaryExpression;
   double evaluate() const override;
+private:
+  mutable std::optional<double> m_cache;
 };
 
 class ExponentiationExpression: public BinaryExpression {
 public:
   using BinaryExpression::BinaryExpression;
   double evaluate() const override;
+private:
+  mutable std::optional<double> m_cache;
 };
 
 class NegativeSignExpression: public Expression {
@@ -79,6 +90,7 @@ public:
 private:
   TokenType m_operator;
   std::unique_ptr<Expression> m_right;
+  mutable std::optional<double> m_cache;
 };
 
 class RealNumberExpression: public Expression {
@@ -103,6 +115,7 @@ public:
 private:
   std::unique_ptr<Expression> m_innerExpression;
   TokenType m_tokenType;
+  mutable std::optional<double> m_cache;
 };
 
 class LogarithmExpression: public Expression {
@@ -118,6 +131,7 @@ private:
   std::unique_ptr<Expression> m_innerExpression;
   double m_base{0};
   TokenType m_tokenType;
+  mutable std::optional<double> m_cache;
 };
 
 }
