@@ -66,7 +66,6 @@ public:
   using IndexErrorPairs = std::vector<std::pair<size_t, Errors>>;
 
   enum class OperationPriority {
-    Minimum = 0,
     Addition = 1,
     Subtraction = 1,
     Sign = 2,
