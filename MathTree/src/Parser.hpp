@@ -55,7 +55,7 @@ private:
 
 class ArithmeticParser {
 public:
-  enum class Errors {
+  enum class SyntaxErrors {
     UnpairedOpeningBracket,
     UnpairedClosingBracket,
     IncompleteOperation,
@@ -63,7 +63,7 @@ public:
     UnrecognisedSymbol,
     NothingBetweenBrackets
   };
-  using IndexErrorPairs = std::vector<std::pair<size_t, Errors>>;
+  using IndexErrorPairs = std::vector<std::pair<size_t, SyntaxErrors>>;
 
   enum class OperationPriority {
     Addition = 1,
@@ -76,7 +76,7 @@ public:
     Logarithm = 3
   };
 
-  static IndexErrorPairs validate(std::string_view input);
+  static IndexErrorPairs validateSyntax(std::string_view input);
   
   ArithmeticParser();
   std::unique_ptr<Expression> parse(std::string input);

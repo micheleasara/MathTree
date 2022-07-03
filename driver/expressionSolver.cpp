@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-void printError(size_t idx, MathTree::ArithmeticParser::Errors error);
+void printError(size_t idx, MathTree::ArithmeticParser::SyntaxErrors error);
 bool userWantsToContinue();
 
 int main() {
@@ -24,7 +24,7 @@ int main() {
     std::cout << "Enter an expression:\n";
     std::getline(std::cin, input);
 
-    auto idxErrorPairs = ArithmeticParser::validate(input);
+    auto idxErrorPairs = ArithmeticParser::validateSyntax(input);
     std::sort(idxErrorPairs.begin(), idxErrorPairs.end(), [](auto const& leftPair, 
                                                              auto const& rightPair) {
       return leftPair.first < rightPair.first;
@@ -51,20 +51,20 @@ int main() {
   return 0;
 }
 
-void printError(size_t idx, MathTree::ArithmeticParser::Errors error) {
+void printError(size_t idx, MathTree::ArithmeticParser::SyntaxErrors error) {
   using MathTree::ArithmeticParser;
   switch (error) {
-    case ArithmeticParser::Errors::UnpairedClosingBracket:
+    case ArithmeticParser::SyntaxErrors::UnpairedClosingBracket:
       std::cerr << "Unpaired ')' at index " << idx << ".\n"; break;
-    case ArithmeticParser::Errors::UnpairedOpeningBracket:
+    case ArithmeticParser::SyntaxErrors::UnpairedOpeningBracket:
       std::cerr << "Unpaired '(' at index " << idx << ".\n"; break;
-    case ArithmeticParser::Errors::MissingOperator:
+    case ArithmeticParser::SyntaxErrors::MissingOperator:
       std::cerr << "Missing operator at index " << idx << ".\n"; break;
-    case ArithmeticParser::Errors::IncompleteOperation:
+    case ArithmeticParser::SyntaxErrors::IncompleteOperation:
       std::cerr << "Operation with a missing operand at index " << idx << ".\n"; break;
-    case ArithmeticParser::Errors::UnrecognisedSymbol:
+    case ArithmeticParser::SyntaxErrors::UnrecognisedSymbol:
       std::cerr << "Unrecognised symbol at index " << idx << ".\n"; break;
-    case ArithmeticParser::Errors::NothingBetweenBrackets:
+    case ArithmeticParser::SyntaxErrors::NothingBetweenBrackets:
       std::cerr << "Nothing between brackets starting at index " << idx << ".\n"; break;
     default:
       std::cerr << "Unknown error at index " << idx << ".\n"; break;

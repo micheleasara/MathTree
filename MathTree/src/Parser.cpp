@@ -82,7 +82,7 @@ void PrattParser::reset() {
   m_lexer->reset();
 }
 
-ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view input) {
+ArithmeticParser::IndexErrorPairs ArithmeticParser::validateSyntax(std::string_view input) {
   static SymbolMatcher const symbolMatcher({TokenType::Plus, TokenType::Minus,
                                               TokenType::Slash, TokenType::Asterisk,
                                               TokenType::Caret, TokenType::SquareRoot});
@@ -118,20 +118,20 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view in
     if (input[i] == '(') {
       openBracketsIdx.push_back(i);
       if (wasNumber) {
-        idxErrorPairs.emplace_back(i, Errors::MissingOperator);
+        idxErrorPairs.emplace_back(i, SyntaxErrors::MissingOperator);
       }
     } else if (input[i] == ')') {
       if (openBracketsIdx.size() > 0) {
         auto openingIdx = openBracketsIdx.back();
         openBracketsIdx.pop_back();
         if (static_cast<size_t>(lastNonSpaceIdx) <= openingIdx) {
-          idxErrorPairs.emplace_back(openingIdx, Errors::NothingBetweenBrackets);
+          idxErrorPairs.emplace_back(openingIdx, SyntaxErrors::NothingBetweenBrackets);
         }
       } else {
-        idxErrorPairs.emplace_back(i, Errors::UnpairedClosingBracket);
+        idxErrorPairs.emplace_back(i, SyntaxErrors::UnpairedClosingBracket);
       }
       if (wasOperator) {
-        idxErrorPairs.emplace_back(lastNonSpaceIdx, Errors::IncompleteOperation);
+        idxErrorPairs.emplace_back(lastNonSpaceIdx, SyntaxErrors::IncompleteOperation);
       }
     } else if (operatorOpt) {
       auto isSqrtOrLog = operatorOpt->type() == TokenType::SquareRoot ||
@@ -139,18 +139,18 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view in
       if (isSqrtOrLog && !wasOperator && lastNonSpaceIdx != -1 && input[lastNonSpaceIdx] != '(') {
         // sqrt and log must be preceded by an operator, or by an opening bracket,
         // or they must be at the start of the expression
-        idxErrorPairs.emplace_back(i, Errors::MissingOperator);
+        idxErrorPairs.emplace_back(i, SyntaxErrors::MissingOperator);
       } else if ((wasOperator || lastNonSpaceIdx == -1 || input[lastNonSpaceIdx] == '(') && 
                                            !isSqrtOrLog && !signMatcher.match(operatorOpt->text(), 0)) {
         // allow expressions like 1+-2, 2++3, sqrtsqrt3, 2-sqrt2 and so on, but disallow
         // other operators from appearing in a row without numbers between them.
         // Also ensure no binary operator is at the start of the expression.
-        idxErrorPairs.emplace_back(i, Errors::IncompleteOperation);
+        idxErrorPairs.emplace_back(i, SyntaxErrors::IncompleteOperation);
       }
     } else if (numberOpt && (wasNumber || (lastNonSpaceIdx > -1 && input[lastNonSpaceIdx] == ')'))) {
-      idxErrorPairs.emplace_back(i, Errors::MissingOperator);
+      idxErrorPairs.emplace_back(i, SyntaxErrors::MissingOperator);
     } else if (!operatorOpt && !numberOpt) {
-      idxErrorPairs.emplace_back(i, Errors::UnrecognisedSymbol);
+      idxErrorPairs.emplace_back(i, SyntaxErrors::UnrecognisedSymbol);
     }
 
     lastNonSpaceIdx = static_cast<int>(i);
@@ -160,11 +160,11 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validate(std::string_view in
   }
 
   if (wasOperator) {
-    idxErrorPairs.emplace_back(lastNonSpaceIdx, Errors::IncompleteOperation);
+    idxErrorPairs.emplace_back(lastNonSpaceIdx, SyntaxErrors::IncompleteOperation);
   }
 
   for (auto const& idx: openBracketsIdx) {
-    idxErrorPairs.emplace_back(idx, Errors::UnpairedOpeningBracket);
+    idxErrorPairs.emplace_back(idx, SyntaxErrors::UnpairedOpeningBracket);
   }
 
   return idxErrorPairs;
