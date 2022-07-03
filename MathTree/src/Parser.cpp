@@ -97,7 +97,7 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validateSyntax(std::string_v
 
   IndexErrorPairs idxErrorPairs;
   std::vector<size_t> openBracketsIdx;
-  int lastNonSpaceIdx = -1;
+  std::optional<size_t> lastNonSpaceIdx;
   auto wasNumber = false;
   auto wasOperator = false;
   for (size_t i = 0; i < input.size(); ++i) {
@@ -124,43 +124,44 @@ ArithmeticParser::IndexErrorPairs ArithmeticParser::validateSyntax(std::string_v
       if (openBracketsIdx.size() > 0) {
         auto openingIdx = openBracketsIdx.back();
         openBracketsIdx.pop_back();
-        if (static_cast<size_t>(lastNonSpaceIdx) <= openingIdx) {
+        if (lastNonSpaceIdx.value_or(openingIdx+1) <= openingIdx) {
           idxErrorPairs.emplace_back(openingIdx, SyntaxErrors::NothingBetweenBrackets);
         }
       } else {
         idxErrorPairs.emplace_back(i, SyntaxErrors::UnpairedClosingBracket);
       }
       if (wasOperator) {
-        idxErrorPairs.emplace_back(lastNonSpaceIdx, SyntaxErrors::IncompleteOperation);
+        idxErrorPairs.emplace_back(lastNonSpaceIdx.value_or(i), SyntaxErrors::IncompleteOperation);
       }
     } else if (operatorOpt) {
       auto isSqrtOrLog = operatorOpt->type() == TokenType::SquareRoot ||
                          operatorOpt->type() == TokenType::Log;
-      if (isSqrtOrLog && !wasOperator && lastNonSpaceIdx != -1 && input[lastNonSpaceIdx] != '(') {
+      if (isSqrtOrLog && !wasOperator && lastNonSpaceIdx && input[*lastNonSpaceIdx] != '(') {
         // sqrt and log must be preceded by an operator, or by an opening bracket,
         // or they must be at the start of the expression
         idxErrorPairs.emplace_back(i, SyntaxErrors::MissingOperator);
-      } else if ((wasOperator || lastNonSpaceIdx == -1 || input[lastNonSpaceIdx] == '(') && 
+      } else if ((wasOperator || !lastNonSpaceIdx.has_value() || input[*lastNonSpaceIdx] == '(') &&
                                            !isSqrtOrLog && !signMatcher.match(operatorOpt->text(), 0)) {
         // allow expressions like 1+-2, 2++3, sqrtsqrt3, 2-sqrt2 and so on, but disallow
         // other operators from appearing in a row without numbers between them.
         // Also ensure no binary operator is at the start of the expression.
         idxErrorPairs.emplace_back(i, SyntaxErrors::IncompleteOperation);
       }
-    } else if (numberOpt && (wasNumber || (lastNonSpaceIdx > -1 && input[lastNonSpaceIdx] == ')'))) {
+    } else if (numberOpt && (wasNumber || (lastNonSpaceIdx && input[*lastNonSpaceIdx] == ')'))) {
       idxErrorPairs.emplace_back(i, SyntaxErrors::MissingOperator);
     } else if (!operatorOpt && !numberOpt) {
       idxErrorPairs.emplace_back(i, SyntaxErrors::UnrecognisedSymbol);
     }
 
-    lastNonSpaceIdx = static_cast<int>(i);
+    lastNonSpaceIdx = i;
     wasNumber = numberOpt.has_value();
     wasOperator = operatorOpt.has_value();
     i += increment;
   }
 
   if (wasOperator) {
-    idxErrorPairs.emplace_back(lastNonSpaceIdx, SyntaxErrors::IncompleteOperation);
+    idxErrorPairs.emplace_back(lastNonSpaceIdx.value_or(input.size() - 1),
+                               SyntaxErrors::IncompleteOperation);
   }
 
   for (auto const& idx: openBracketsIdx) {
