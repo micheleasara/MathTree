@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(MATHTREE_PATH ../MathTree)
 set(MATHTREE_BUILD_PATH lib)
-option(TESTS "Build MathTree's unit tests" OFF)
+option(TESTS "Build tests" ON)
 
 add_subdirectory(${MATHTREE_PATH} ${MATHTREE_BUILD_PATH})
 
