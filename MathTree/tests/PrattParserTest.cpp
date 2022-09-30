@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
+#include "ExpressionMock.hpp"
 #include "Lexer.hpp"
 #include "Parser.hpp"
 
@@ -79,16 +80,16 @@ TEST_F(PrattParserTest, callsTheCorrespondingPrefixParseletWithItselfAndTheCurre
 }
 
 TEST_F(PrattParserTest, callsInfixParseletWithThePrefixBeforeItAsItsArgument) {
-  auto numberExprPtr = std::make_unique<MathTree::RealNumberExpression>("1");
-  auto& numberExpr = *numberExprPtr;
+  auto expressionMockPtr = std::make_unique<NiceExpressionMock>();
+  auto& expressionMock = *expressionMockPtr;
 
   EXPECT_CALL(lexerMock, next()).WillOnce(Return(tokenNum))
                                 .WillOnce(Return(tokenPlus))
                                 .WillRepeatedly(DoDefault()); // 1+ and then stop
   EXPECT_CALL(prefixMock, parse(_, _)).WillOnce(Return(
-                                                      ByMove(std::move(numberExprPtr))));
+                                                      ByMove(std::move(expressionMockPtr))));
   EXPECT_CALL(infixMock, parse(Ref(parser),
-                               Pointee(Ref(numberExpr)),
+                               Pointee(Ref(expressionMock)),
                                Const(tokenPlus)));
   parser.parse();
 }
